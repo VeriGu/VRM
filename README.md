@@ -399,7 +399,7 @@ You can replace `hack` with `kern` to run kernbench.
 
 We provide scripts for multiple VMs setup. Before you run benchmarks, make sure images for VMs and benchmark are [craeted](#243-create-multiple-vms-images).
 
-We provide scripts to run multiple VMs benchmarks on the client.
+We provide scripts to run multiple VMs benchmarks on the client. Due to hardware constraints, here we use 8 VMs.
 
 #### 2.11.1 Launch VMs
 
@@ -409,29 +409,34 @@ You can launch VMs by:
 # cd /mydata/sosp-paper211-ae/scripts/multi
 # ./multi-sekvm.py apache
 ```
-Waiting until all VMs can be connected by the client.
+This script does not signal when it terminates. You should press Enter when there is no more output in the console. Same with multi-run.sh below.
 
 Note that you can only run benchmarks correpsonding to image used by the VM. Due to IP address configuration, you cannot boot VMs for different benchmarks at the same time.
 To run different benchmarks, you should first [shutdown](#2114-shutdown-vms) current VMs.
 
-**Note: all scripts under scripts/client should only be run on the client machine.**
+There are 56 available VMIDs in SeKVM. When they are exhausted, you will see an error "ioctl(KVM_CREATE_VM) failed: 22 Invalid argument    qemu-system-aarch64: failed to initialize KVM: Invalid argument    qemu-system-aarch64: kvm_init_vcpu failed: Input/output error". Then you need to reboot the server and relaunch VMs.
+
+
+**Note: all scripts below under scripts/client should only be run on the client machine.**
 
 To test the connection to the VM, run:
 
 ```
 # ./multi-connection.sh
 ```
+If some connection fails, reboot the server and relaunch VMs.
+
 #### 2.11.2 Apache/MongoDB/Redis
 
-You can run benchmarks by:
+You can run these benchmarks by:
 ```
 # ./multi-prep.sh apache
 # ./multi-run.sh apache
 ```
 
-You can replace `apache` with `mongo` or `redis` to run mongodb or redis.
+You can replace `apache` with `mongo` or `redis` to run mongodb or redis. `mongo` may trigger some intermediate errors which you can safely ignore.
 
-The results will be stored at `scripts/client/apache.txt`.
+The throughput numbers (ops/sec) of each VM/run will be appended at `scripts/client/apache.txt`.
 
 #### 2.11.3 Hackbench/Kernbench
 
@@ -445,10 +450,10 @@ After hackbench is done, you can download the result from the server:
 # ./multi-grab.sh hack
 ```
 
-The result will be stored at `scripts/client/hackbench.txt`.
+The runtime numbers (sec) of each VM/run will be appended at `scripts/client/hackbench.txt`.
 
 
-You can replace `hack` with `kern` to run kernbench.
+You can replace `hack` with `kern` to run kernbench. These two benchmarks take longer to run. For `hack`, wait for at least one minute before you determine there is no more output and then press Enter. For `kern`, wait for 5 minutes.
 
 #### 2.11.4 Shutdown VMs
 
