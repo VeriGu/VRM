@@ -1,6 +1,6 @@
 [submodule "linux"]
 	path = linux
-	url = https://github.com/columbia/usenix-ae-linux.git
+	url = git@github.com:VeriGu/usenix-ae-linux.git
 [submodule "qemu"]
 	path = qemu
-	url = https://github.com/columbia/vct-qemu.git
+	url = git@github.com:VeriGu/vct-qemu.git
