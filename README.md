@@ -175,7 +175,6 @@ and is used throughout the layer refinement proofs.
 We provide the instructions to run and test SeKVM as follows.
 
 ### 2.1 Prerequisites
-* The source code for SeKVM is hosted on our github private repository. Please send us your github ID for accessing the code via email.
 
 * We leverage [Cloudlab.us](https://www.cloudlab.us/) which provides machines and preconfigured profiles. Machines will be available upon request for artifact evaluation. See [Instructions for Cloudlab](#22-instructions-for-cloudlab). For our profile, we include two physical Arm machines (server/client) connected by <em>private</em> network.
   
@@ -203,25 +202,21 @@ On the client, you have the v4.18 kerenl installed. Once the server is running a
 
 Clone this repository on both machines as a **root** user in the `\root` directory. Note that all the commands other than this `git clone` command need to be executed in the directory this repo is cloned.
 
-You should first generate keys on both the server and the client machine, and copy both public keys to your github account. 
 ```
 # sudo su;
-# ssh-keygen (overwrite the existing keys if needed, same below)
-# cat ~/.ssh/id_rsa.pub
-ssh-rsa AABB... //copy to github (click scroll down box on the top right-> Settings-> SSH and GPG keys) 
 ```
 
 #### 2.4.1 Clone the Artifact Repo
 On the server, you will need to clone the repo to a dedicated SSD mounted to `/mydata`.
 ```
 # cd /mydata
-# git clone git@github.com:columbia/sosp-paper211-ae.git
+# git clone https://github.com/VeriGu/sosp-paper211-ae.git
 # cd sosp-paper211-ae 
 ```
 On the client, you can just clone it to the home directory.
 ```
 # cd /root
-# git clone git@github.com:columbia/sosp-paper211-ae.git
+# git clone https://github.com/VeriGu/sosp-paper211-ae.git
 # cd sosp-paper211-ae 
 ```
 
