@@ -182,7 +182,7 @@ We provide the instructions to run and test SeKVM as follows.
 
 #### 2.2.1 Joining Cloudlab
 Please sign up in cloud.us: https://www.cloudlab.us/signup.php to be able to access machines. Join the existing project: VirtualCloudTech, and we will receive a notification automatically and we will let you in.
-
+To ensure anonymity, please use "SOSP21 AE #nonce" for full name, a one-time email address and random information in other fields.
 #### 2.2.2 Cloudlab profiles
 Use the `e6998-vct-m400` profile for running experiments. In **Cluster**, please select **Cloudlab Utah**. Please be patient and wait for the machines to setup and boot.
 
