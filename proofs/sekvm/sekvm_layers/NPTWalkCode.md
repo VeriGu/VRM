@@ -1,4 +1,4 @@
-# NPTWalkCode
+# Code
 
 ```coq
 Require Import Coqlib.

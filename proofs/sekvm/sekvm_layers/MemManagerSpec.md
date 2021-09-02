@@ -1,4 +1,4 @@
-# MemManagerSpec
+# Spec
 
 ```coq
 Require Import Coqlib.
@@ -23,6 +23,7 @@ Require Import liblayers.compat.CompatGenSem.
 Require Import PageManager.Spec.
 Require Import NPTOps.Spec.
 Require Import AbstractMachine.Spec.
+Require Import Locks.Spec.
 Require Import RData.
 Require Import PageManager.Layer.
 Require Import Constants.
@@ -38,7 +39,7 @@ Section MemManagerSpec.
   Definition map_page_host_spec (addr: Z64) (adt: RData) : option RData :=
     match addr with
     | VZ64 addr =>
-      rely is_addr addr;
+      rely is_paddr addr;
       let pfn := addr / PAGE_SIZE in
       if halt adt then Some adt else
       let cpu := curid adt in

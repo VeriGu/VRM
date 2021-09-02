@@ -1,4 +1,4 @@
-# LockOpsQProofCode
+# ProofLow
 
 ```coq
 Require Import Coqlib.

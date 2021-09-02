@@ -1,4 +1,4 @@
-# LockOpsQSpec
+# Spec
 
 ```coq
 Require Import Coqlib.

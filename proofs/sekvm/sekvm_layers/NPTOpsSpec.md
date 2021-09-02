@@ -1,4 +1,4 @@
-# NPTOpsSpec
+# Spec
 
 ```coq
 Require Import Coqlib.
@@ -25,6 +25,7 @@ Require Import HypsecCommLib.
 Require Import Constants.
 Require Import NPTWalk.Spec.
 Require Import AbstractMachine.Spec.
+Require Import Locks.Spec.
 Require Import RData.
 
 Local Open Scope Z_scope.

@@ -1,4 +1,4 @@
-# VCPUOpsRefine
+# ProofHigh
 
 ```coq
 Require Import Coqlib.
@@ -90,19 +90,10 @@ Section VCPUOpsProofHigh.
                (Hrel: relate_RData f habd labd),
           exists labd', save_shadow_kvm_regs_spec  labd = Some labd' /\ relate_RData f habd' labd'.
         Proof.
-          intros until f.
-          solve_refine_proof save_shadow_kvm_regs0; repeat hstep; try htrivial.
+          intros. inv Hrel; subst.
+          eexists; split. eassumption.
+          constructor; reflexivity.
         Qed.
-
-      Lemma save_shadow_kvm_regs_spec_ref:
-        compatsim (crel RData RData) (gensem save_shadow_kvm_regs_spec) save_shadow_kvm_regs_spec_low.
-      Proof.
-        Opaque save_shadow_kvm_regs_spec.
-        compatsim_simpl (@match_RData).
-        exploit save_shadow_kvm_regs_spec_exists; eauto 1;
-        intros (labd' & Hspec & Hrel).
-        refine_split; repeat (try econstructor; eauto).
-      Qed.
 
       Lemma restore_shadow_kvm_regs_spec_exists:
         forall habd habd' labd  f
@@ -110,29 +101,12 @@ Section VCPUOpsProofHigh.
                (Hrel: relate_RData f habd labd),
           exists labd', restore_shadow_kvm_regs_spec  labd = Some labd' /\ relate_RData f habd' labd'.
         Proof.
-          intros until f.
-          solve_refine_proof restore_shadow_kvm_regs0; repeat hstep; try htrivial.
+          intros. inv Hrel; subst.
+          eexists; split. eassumption.
+          constructor; reflexivity.
         Qed.
 
-      Lemma restore_shadow_kvm_regs_spec_ref:
-        compatsim (crel RData RData) (gensem restore_shadow_kvm_regs_spec) restore_shadow_kvm_regs_spec_low.
-      Proof.
-        Opaque restore_shadow_kvm_regs_spec.
-        compatsim_simpl (@match_RData).
-        exploit restore_shadow_kvm_regs_spec_exists; eauto 1;
-        intros (labd' & Hspec & Hrel).
-        refine_split; repeat (try econstructor; eauto).
-      Qed.
-
     End FreshPrim.
-
-    Section PassthroughPrim.
-
-      Lemma passthrough_correct:
-        sim (crel HDATA LDATA) VCPUOps_passthrough VCPUOpsAux.
-        Admitted.
-
-    End PassthroughPrim.
 
   End WITHMEM.
 

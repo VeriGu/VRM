@@ -33,7 +33,8 @@ Require Import liblayers.compat.CompatGenSem.
 Require Import RData.
 Require Import Constants.
 Require Import HypsecCommLib.
-Require Import HighSpecs.
+Require Import TrapHandler.Spec.
+Require Import AbstractMachine.Spec.
 Require Import MemoryIsolation.
 
 Local Open Scope Z_scope.

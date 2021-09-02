@@ -1,4 +1,4 @@
-# LocksCode
+# Code
 
 ```coq
 Require Import Coqlib.

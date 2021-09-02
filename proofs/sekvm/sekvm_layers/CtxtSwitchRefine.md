@@ -1,4 +1,4 @@
-# CtxtSwitchRefine
+# ProofHigh
 
 ```coq
 Require Import Coqlib.
@@ -90,8 +90,9 @@ Section CtxtSwitchProofHigh.
                (Hrel: relate_RData f habd labd),
           exists labd', save_host_spec  labd = Some labd' /\ relate_RData f habd' labd'.
         Proof.
-          intros until f.
-          solve_refine_proof save_host0; repeat hstep; try htrivial.
+          intros. inv Hrel; subst.
+          eexists; split. eassumption.
+          constructor; reflexivity.
         Qed.
 
       Lemma save_host_spec_ref:
@@ -110,8 +111,9 @@ Section CtxtSwitchProofHigh.
                (Hrel: relate_RData f habd labd),
           exists labd', restore_host_spec  labd = Some labd' /\ relate_RData f habd' labd'.
         Proof.
-          intros until f.
-          solve_refine_proof restore_host0; repeat hstep; try htrivial.
+          intros. inv Hrel; subst.
+          eexists; split. eassumption.
+          constructor; reflexivity.
         Qed.
 
       Lemma restore_host_spec_ref:
@@ -130,8 +132,9 @@ Section CtxtSwitchProofHigh.
                (Hrel: relate_RData f habd labd),
           exists labd', save_vm_spec  labd = Some labd' /\ relate_RData f habd' labd'.
         Proof.
-          intros until f.
-          solve_refine_proof save_vm0; repeat hstep; try htrivial.
+          intros. inv Hrel; subst.
+          eexists; split. eassumption.
+          constructor; reflexivity.
         Qed.
 
       Lemma save_vm_spec_ref:
@@ -150,8 +153,9 @@ Section CtxtSwitchProofHigh.
                (Hrel: relate_RData f habd labd),
           exists labd', restore_vm_spec  labd = Some labd' /\ relate_RData f habd' labd'.
         Proof.
-          intros until f.
-          solve_refine_proof restore_vm0; repeat hstep; try htrivial.
+          intros. inv Hrel; subst.
+          eexists; split. eassumption.
+          constructor; reflexivity.
         Qed.
 
       Lemma restore_vm_spec_ref:
@@ -165,14 +169,6 @@ Section CtxtSwitchProofHigh.
       Qed.
 
     End FreshPrim.
-
-    Section PassthroughPrim.
-
-      Lemma passthrough_correct:
-        sim (crel HDATA LDATA) CtxtSwitch_passthrough VCPUOps.
-        Admitted.
-
-    End PassthroughPrim.
 
   End WITHMEM.
 

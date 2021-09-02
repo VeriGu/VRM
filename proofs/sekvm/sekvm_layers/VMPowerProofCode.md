@@ -1,4 +1,4 @@
-# VMPowerProofCode
+# ProofLow
 
 ```coq
 Require Import Coqlib.
@@ -47,6 +47,7 @@ Require Import Ctypes.
 
 Require Import VMPower.Spec.
 Require Import AbstractMachine.Spec.
+Require Import Locks.Spec.
 Require Import MemoryOps.Layer.
 Require Import Ident.
 Require Import VMPower.Code.

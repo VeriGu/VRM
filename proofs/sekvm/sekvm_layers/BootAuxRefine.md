@@ -1,4 +1,4 @@
-# BootAuxRefine
+# ProofHigh
 
 ```coq
 Require Import Coqlib.
@@ -106,14 +106,6 @@ Section BootAuxProofHigh.
       Qed.
 
     End FreshPrim.
-
-    Section PassthroughPrim.
-
-      Lemma passthrough_correct:
-        sim (crel HDATA LDATA) BootAux_passthrough BootCore.
-        Admitted.
-
-    End PassthroughPrim.
 
   End WITHMEM.
 

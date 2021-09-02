@@ -1,4 +1,4 @@
-# BootAux
+# Layer
 
 ```coq
 Require Import Coqlib.
@@ -25,6 +25,7 @@ Require Import liblayers.compat.CompatGenSem.
 
 Require Import MemoryOps.Spec.
 Require Import AbstractMachine.Spec.
+Require Import Locks.Spec.
 Require Import BootCore.Spec.
 Require Import NPTOps.Spec.
 Require Import MmioSPTWalk.Spec.

@@ -2,31 +2,45 @@
 
 ```coq
 Require Import Coqlib.
-Require Import Maps.
+Require Import Errors.
+Require Import AST.
 Require Import Integers.
+Require Import Floats.
+Require Import Op.
+Require Import Events.
+Require Import Globalenvs.
+Require Import Smallstep.
 Require Import Values.
-Require Import GenSem.
-Require Import Coqlib.
+Require Import Memory.
 Require Import Maps.
-Require Import Integers.
-Require Import Values.
+Require Import ZSet.
+Require Import ListLemma2.
+Require Import CommonTactic.
+Require Import AuxLemma.
+Require Import AuxStateDataType.
 Require Import RealParams.
-Require Import GenSem.
-Require Import Clight.
-Require Import CDataTypes.
-Require Import Ctypes.
+Require Import RefinementTactic.
 Require Import PrimSemantics.
-Require Import CompatClightSem.
+Require Import LayerCalculusLemma.
+Require Import TacticsForTesting.
+Require Import liblayers.logic.PTreeModules.
+Require Import liblayers.logic.LayerLogicImpl.
 Require Import liblayers.compcertx.Stencil.
+Require Import liblayers.compcertx.MakeProgram.
 Require Import liblayers.compat.CompatLayers.
 Require Import liblayers.compat.CompatGenSem.
 
 Require Import RData.
+Require Import TrapHandler.Spec.
 Require Import Constants.
-Require Import HighSpecs.
 Require Import HypsecCommLib.
+Require Import Invs.
+Require Import InvProofs.
+Require Import AbstractMachine.Spec.
 
-Local Open Scope Z.
+Local Open Scope Z_scope.
+Local Opaque Z.add Z.mul Z.div Z.shiftl Z.shiftr Z.land Z.lor.
+Local Opaque Z.eqb Z.leb Z.ltb Z.geb Z.gtb.
 
 Definition valid_role (vmid: Z) (adt: RData) :=
   vmid = HOSTVISOR \/ (HOSTVISOR < vmid < COREVISOR /\ vm_state (VS (vmid @ (vminfos (shared adt)))) = VERIFIED).

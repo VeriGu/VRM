@@ -1,4 +1,4 @@
-# MmioPTWalkCode
+# Code
 
 ```coq
 Require Import Coqlib.

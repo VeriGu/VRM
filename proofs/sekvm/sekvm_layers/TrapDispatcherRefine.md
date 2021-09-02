@@ -1,4 +1,4 @@
-# TrapDispatcherRefine
+# ProofHigh
 
 ```coq
 Require Import Coqlib.
@@ -90,8 +90,9 @@ Section TrapDispatcherProofHigh.
                (Hrel: relate_RData f habd labd),
           exists labd', host_hvc_dispatcher_spec  labd = Some labd' /\ relate_RData f habd' labd'.
         Proof.
-          intros until f.
-          solve_refine_proof host_hvc_dispatcher0; repeat hstep; try htrivial.
+          intros. inv Hrel; subst.
+          eexists; split. eassumption.
+          constructor; reflexivity.
         Qed.
 
       Lemma host_hvc_dispatcher_spec_ref:
@@ -110,8 +111,9 @@ Section TrapDispatcherProofHigh.
                (Hrel: relate_RData f habd labd),
           exists labd', vm_exit_dispatcher_spec vmid vcpuid labd = Some (labd', res) /\ relate_RData f habd' labd'.
         Proof.
-          intros until f.
-          solve_refine_proof vm_exit_dispatcher0; repeat hstep; try htrivial.
+          intros. inv Hrel; subst.
+          eexists; split. eassumption.
+          constructor; reflexivity.
         Qed.
 
       Lemma vm_exit_dispatcher_spec_ref:
@@ -125,14 +127,6 @@ Section TrapDispatcherProofHigh.
       Qed.
 
     End FreshPrim.
-
-    Section PassthroughPrim.
-
-      Lemma passthrough_correct:
-        sim (crel HDATA LDATA) TrapDispatcher_passthrough FaultHandler.
-        Admitted.
-
-    End PassthroughPrim.
 
   End WITHMEM.
 

@@ -1,4 +1,4 @@
-# MemManagerRefine
+# ProofHigh
 
 ```coq
 Require Import Coqlib.
@@ -37,6 +37,7 @@ Require Import MemManager.Spec.
 Require Import HypsecCommLib.
 Require Import PageManager.Layer.
 Require Import AbstractMachine.Spec.
+Require Import Locks.Spec.
 Require Import PageManager.Spec.
 Require Import NPTOps.Spec.
 Require Import NPTWalk.Spec.
@@ -152,15 +153,19 @@ Section MemManagerProofHigh.
           assert(NE52: 5 <> 2) by omega. assert(NE25: 2 <> 5) by omega.
           repeat simpl_hyp Hspec; contra.
           - extract_if. apply andb_true_iff; split; bool_rel_all; somega.
-            apply addr_range_gfn; assumption. rewrite Cond.
+            reflexivity. rewrite Cond.
+            extract_if. apply andb_true_iff; split; bool_rel_all; somega.
+            apply addr_range_gfn; assumption. rewrite Cond0.
             inv Hspec. repeat srewrite; simpl.
-            extract_if. apply andb_true_iff; split; bool_rel_all; somega. rewrite Cond0.
+            extract_if. apply andb_true_iff; split; bool_rel_all; somega. rewrite Cond1.
             srewrite. eexists; split. reflexivity. constructor; reflexivity.
           - simpl in *. repeat (srewrite; simpl; try rewrite ZMap.gss).
             extract_if. apply andb_true_iff; split; bool_rel_all0; somega.
-            apply addr_range_gfn; assumption. rewrite Cond.
+            reflexivity. rewrite Cond.
+            extract_if. apply andb_true_iff; split; bool_rel_all0; somega.
+            apply addr_range_gfn; assumption. rewrite Cond0.
             srewrite. destruct_if.
-            extract_if. apply andb_true_iff; split; bool_rel_all0; somega. rewrite Cond0.
+            extract_if. apply andb_true_iff; split; bool_rel_all0; somega. rewrite Cond1.
             rewrite Z.add_0_r. rewrite (ZMap.gso _ _ NE52). srewrite.
             assert(NZ: Z.lor (z / 4096 * 4096) (Z.lor 18014398509483847 192) =? 0 = false).
             bool_rel. red; intro T. apply Z.lor_eq_0_iff in T.
@@ -173,7 +178,7 @@ Section MemManagerProofHigh.
             inv Hspec. eexists; split. reflexivity. constructor.
             destruct labd, shared; simpl. repeat (rewrite (zmap_comm _ _ NE52); rewrite ZMap.set2).
             reflexivity. simpl in C16; srewrite.
-            extract_if. apply andb_true_iff; split; bool_rel_all; somega. rewrite Cond0.
+            extract_if. apply andb_true_iff; split; bool_rel_all; somega. rewrite Cond1.
             rewrite Z.add_0_r. rewrite (ZMap.gso _ _ NE52). srewrite.
             assert(NZ: Z.lor (z / 4096 * 4096) 4095 =? 0 = false).
             bool_rel. red; intro T. apply Z.lor_eq_0_iff in T.
@@ -188,7 +193,9 @@ Section MemManagerProofHigh.
             reflexivity.
           - simpl in *. repeat (srewrite; simpl; try rewrite ZMap.gss).
             extract_if. apply andb_true_iff; split; bool_rel_all0; somega.
-            apply addr_range_gfn; assumption. rewrite Cond.
+            reflexivity. rewrite Cond.
+            extract_if. apply andb_true_iff; split; bool_rel_all0; somega.
+            apply addr_range_gfn; assumption. rewrite Cond0.
             srewrite. destruct_if. simpl in C16; contra. destruct_if. simpl in C16; contra.
             inv Hspec. eexists; split. reflexivity. constructor. reflexivity.
           Local Opaque Z.eqb.

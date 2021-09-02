@@ -1,4 +1,4 @@
-# MemManager
+# Layer
 
 ```coq
 Require Import Coqlib.
@@ -24,6 +24,7 @@ Require Import liblayers.compat.CompatLayers.
 Require Import liblayers.compat.CompatGenSem.
 
 Require Import AbstractMachine.Spec.
+Require Import Locks.Spec.
 Require Import NPTOps.Spec.
 Require Import MmioSPTWalk.Spec.
 Require Import PageManager.Spec.

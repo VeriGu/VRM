@@ -33,7 +33,8 @@ Require Import liblayers.compat.CompatGenSem.
 Require Import RData.
 Require Import Constants.
 Require Import HypsecCommLib.
-Require Import HighSpecs.
+Require Import TrapHandler.Spec.
+Require Import AbstractMachine.Spec.
 
 Local Open Scope Z_scope.
 Local Opaque Z.add Z.mul Z.div Z.shiftl Z.shiftr Z.land Z.lor.
@@ -237,12 +238,6 @@ Ltac extract_adt H name :=
   end.
 
 (*****************************************************************************************************************************************************)
-
-Hypothesis host_pte_pfn_dev:
-  forall addr, valid_addr addr -> phys_page (Z.lor (addr / PAGE_SIZE * PAGE_SIZE) (Z.lor PAGE_S2_DEVICE S2_RDWR)) / PAGE_SIZE = addr / PAGE_SIZE.
-
-Hypothesis host_pte_pfn_mem:
-  forall addr, valid_addr addr -> phys_page (Z.lor (addr / PAGE_SIZE * PAGE_SIZE) PAGE_S2_KERNEL) / PAGE_SIZE = addr / PAGE_SIZE.
 
 Lemma map_host_inv:
   forall addr s s' a b
@@ -478,12 +473,6 @@ Proof.
   destruct_zmap; simpl; omega.
 Qed.
 
-Hypothesis vm_pte_pfn_level2:
-  forall pte, phys_page (Z.land (Z.lor (phys_page pte) PAGE_S2_KERNEL) NOT_PMD_TABLE_BIT) = phys_page pte.
-
-Hypothesis vm_pte_pfn_level3:
-  forall pte, phys_page (Z.lor (phys_page pte) PAGE_S2_KERNEL) = phys_page pte.
-
 Lemma map_pfn_vm_inv:
   forall vmid addr pte level s s' a
     (ex: local_map_pfn_vm vmid addr pte level s = (s', false, a))
@@ -525,11 +514,6 @@ Lemma map_pfn_vm_iso:
 Proof.
   intros; autounfold in *. hsimpl_func ex; simpl; try omega.
 Qed.
-
-Hypothesis vm_pte_pfn_dev:
-  forall pa, valid_paddr pa ->
-        let pte := Z.lor (phys_page pa) (Z.lor PAGE_S2_DEVICE S2_RDWR) in
-        phys_page pte = pa.
 
 Lemma map_io_inv:
   forall vmid gpa pa s s' a b c

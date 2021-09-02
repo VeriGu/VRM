@@ -1,4 +1,4 @@
-# BootOps
+# Layer
 
 ```coq
 Require Import Coqlib.
@@ -25,6 +25,7 @@ Require Import liblayers.compat.CompatGenSem.
 
 Require Import MemoryOps.Spec.
 Require Import AbstractMachine.Spec.
+Require Import Locks.Spec.
 Require Import BootOps.Spec.
 Require Import MmioSPTWalk.Spec.
 Require Import RData.

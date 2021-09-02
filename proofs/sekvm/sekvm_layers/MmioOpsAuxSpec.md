@@ -1,4 +1,4 @@
-# MmioOpsAuxSpec
+# Spec
 
 ```coq
 Require Import Coqlib.

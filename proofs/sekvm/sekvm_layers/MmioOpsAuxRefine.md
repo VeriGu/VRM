@@ -1,4 +1,4 @@
-# MmioOpsAuxRefine
+# ProofHigh
 
 ```coq
 Require Import Coqlib.
@@ -181,14 +181,6 @@ Section MmioOpsAuxProofHigh.
       Qed.
 
     End FreshPrim.
-
-    Section PassthroughPrim.
-
-      Lemma passthrough_correct:
-        sim (crel HDATA LDATA) MmioOpsAux_passthrough MmioCore.
-        Admitted.
-
-    End PassthroughPrim.
 
   End WITHMEM.
 

@@ -1,4 +1,4 @@
-# NPTWalkProofCode
+# ProofLow
 
 ```coq
 Require Import Coqlib.

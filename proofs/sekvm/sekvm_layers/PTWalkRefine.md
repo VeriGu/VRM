@@ -1,4 +1,4 @@
-# PTWalkRefine
+# ProofHigh
 
 ```coq
 Require Import Coqlib.
@@ -141,8 +141,7 @@ Section PTWalkProofHigh.
            set_pmd_spec0
            set_pte_spec
            set_pte_spec0
-           check64_spec
-           observe_pt.
+           check64_spec.
 
       Lemma walk_pgd_spec_exists:
         forall habd habd' labd vmid vttbr addr alloc res f
@@ -401,14 +400,6 @@ Section PTWalkProofHigh.
       Qed.
 
     End FreshPrim.
-
-    Section PassthroughPrim.
-
-      Lemma passthrough_correct:
-        sim (crel HDATA LDATA) PTWalk_passthrough PTAlloc.
-      Admitted.
-
-    End PassthroughPrim.
 
   End WITHMEM.
 

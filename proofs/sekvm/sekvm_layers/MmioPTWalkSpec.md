@@ -1,4 +1,4 @@
-# MmioPTWalkSpec
+# Spec
 
 ```coq
 Require Import Coqlib.

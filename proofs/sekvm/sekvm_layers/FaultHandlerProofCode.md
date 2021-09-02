@@ -1,4 +1,4 @@
-# FaultHandlerProofCode
+# ProofLow
 
 ```coq
 Require Import Coqlib.
@@ -115,14 +115,15 @@ Section FaultHandlerProofLow.
                                            (Tcons tulong (Tcons tuint Tnil)) tuint cc_default).
 
       Lemma handle_host_stage2_fault_body_correct:
-        forall m d d' env le 
+        forall m d d' env le
                (Henv: env = PTree.empty _)
                (Hinv: high_level_invariant d)
-               (Hspec: handle_host_stage2_fault_spec0  d = Some d'),
+               (Hspec: handle_host_stage2_fault_spec  d = Some d'),
              exists le', (exec_stmt ge env le ((m, d): mem) handle_host_stage2_fault_body E0 le' (m, d') Out_normal).
       Proof.
-        solve_code_proof Hspec handle_host_stage2_fault_body; admit
+        solve_code_proof Hspec handle_host_stage2_fault_body; eexists; solve_proof_low.
       Qed.
+
     End BodyProof.
 
     Theorem handle_host_stage2_fault_code_correct:
@@ -133,9 +134,10 @@ Section FaultHandlerProofLow.
       fbigstep_pre L'.
       fbigstep (handle_host_stage2_fault_body_correct s (Genv.globalenv p) makeglobalenv
                b0 Hb0fs Hb0fp b1 Hb1fs Hb1fp b2 Hb2fs Hb2fp b3 Hb3fs Hb3fp m'0 labd labd'
-               (PTree.empty _) (bind_parameter_temps' (fn_params f_handle_host_stage2_fault ) ( :: nil)
+               (PTree.empty _) (bind_parameter_temps' (fn_params f_handle_host_stage2_fault ) nil
                (create_undef_temps (fn_temps f_handle_host_stage2_fault)))) hinv.
     Qed.
+
   End handle_host_stage2_fault_proof.
 
   Section core_handle_pvops_proof.
@@ -205,11 +207,13 @@ Section FaultHandlerProofLow.
         forall m d d' env le  res
                (Henv: env = PTree.empty _)
                (Hinv: high_level_invariant d)
-               (Hspec: core_handle_pvops_spec0  d = Some (d', (Int.unsigned res))),
+               (Hspec: core_handle_pvops_spec  d = Some (d', (Int.unsigned res))),
              exists le', (exec_stmt ge env le ((m, d): mem) core_handle_pvops_body E0 le' (m, d') (Out_return (Some (Vint res, tuint)))).
       Proof.
-        solve_code_proof Hspec core_handle_pvops_body; admit
+        solve_code_proof Hspec core_handle_pvops_body; eexists; solve_proof_low.
+        Grab Existential Variables. assumption.
       Qed.
+
     End BodyProof.
 
     Theorem core_handle_pvops_code_correct:
@@ -220,11 +224,11 @@ Section FaultHandlerProofLow.
       fbigstep_pre L'.
       fbigstep (core_handle_pvops_body_correct s (Genv.globalenv p) makeglobalenv
                b0 Hb0fs Hb0fp b1 Hb1fs Hb1fp b2 Hb2fs Hb2fp b3 Hb3fs Hb3fp b4 Hb4fs Hb4fp b5 Hb5fs Hb5fp b6 Hb6fs Hb6fp m'0 labd labd'
-               (PTree.empty _) (bind_parameter_temps' (fn_params f_core_handle_pvops ) ( :: nil)
+               (PTree.empty _) (bind_parameter_temps' (fn_params f_core_handle_pvops ) nil
                (create_undef_temps (fn_temps f_core_handle_pvops)))) hinv.
     Qed.
+
   End core_handle_pvops_proof.
 
 End FaultHandlerProofLow.
-
 ```

@@ -1,4 +1,4 @@
-# MmioSPTWalkRefine
+# ProofHigh
 
 ```coq
 Require Import Coqlib.
@@ -44,6 +44,111 @@ Require Import NPTWalk.ProofHighAux.
 Local Open Scope Z_scope.
 Local Opaque Z.add Z.mul Z.div Z.shiftl Z.shiftr Z.land Z.lor.
 
+
+Inductive relate_entry (cbndx: Z) (index: Z) (hspt: SPT) (lspt: SPT): Z -> Z -> Z -> Prop :=
+| RELATE_ENTRY:
+    forall addr pfn pte
+      (Hpfn:  pfn = phys_page pte / PAGE_SIZE)
+      (Hpte: let vttbr_pa := SMMU_TTBR index cbndx in
+              let pgd_idx := stage2_pgd_index addr in
+              let pgd_p := Z.lor vttbr_pa (pgd_idx * 8) in
+              let pgd := ZMap.get pgd_p (spt_vttbr_pool lspt) in
+              let pgd_pa := phys_page pgd in
+              ((pgd = 0 /\ pte = 0) \/
+              (pgd <> 0 /\ let pmd_idx := pmd_index addr in
+                          let pmd_p := Z.lor pgd_pa (pmd_idx * 8) in
+                          let pmd := ZMap.get pmd_p (spt_pgd_pool lspt) in
+                          let pmd_pa := phys_page pmd in
+                          (pmd = 0 /\ pte = 0) \/
+                          (pmd <> 0 /\ let pte_idx := pte_index addr in
+                                    let pte_p := Z.lor pmd_pa (pte_idx * 8) in
+                                    ZMap.get pte_p (spt_pmd_pool lspt) = pte)))),
+      relate_entry cbndx index hspt lspt addr pfn pte.
+
+Inductive valid_lspt (lspt: SPT) : Prop :=
+| VALID_LSPT
+    (Hvttbr_pool_range: forall p, is_int64 (p @ (spt_vttbr_pool lspt)) = true)
+    (Hpgd_pool_range: forall p, is_int64 (p @ (spt_pgd_pool lspt)) = true)
+    (Hpmd_pool_range: forall p, is_int64 (p @ (spt_pmd_pool lspt)) = true)
+    (Hpgd_next_range: SMMU_PGD_START <= spt_pgd_next lspt <= SMMU_PMD_START)
+    (Hpmd_next_range: SMMU_PMD_START <= spt_pmd_next lspt <= SMMU_POOL_END)
+    (Hpgd_next_align: phys_page (spt_pgd_next lspt) = (spt_pgd_next lspt))
+    (Hpmd_next_align: phys_page (spt_pmd_next lspt) = (spt_pmd_next lspt))
+    (Hpgd_next: forall addr, addr >= spt_pgd_next lspt -> addr @ (spt_pgd_pool lspt) = 0)
+    (Hpmd_next: forall addr, addr >= spt_pmd_next lspt -> addr @ (spt_pmd_pool lspt) = 0)
+    (Hvttbr_pool: forall addr, addr @ (spt_vttbr_pool lspt) = 0 \/
+                          (SMMU_PGD_START <= phys_page (addr @ (spt_vttbr_pool lspt)) < spt_pgd_next lspt /\
+                            (phys_page (addr @ (spt_vttbr_pool lspt))) @ (spt_pgd_par lspt) = addr))
+    (Hpgd_pool: forall addr, addr @ (spt_pgd_pool lspt) = 0 \/
+                        (SMMU_PMD_START <= phys_page (addr @ (spt_pgd_pool lspt)) < spt_pmd_next lspt /\
+                          (phys_page (addr @ (spt_pgd_pool lspt))) @ (spt_pmd_par lspt) = addr)):
+    valid_lspt lspt.
+
+Hypothesis vttbr_val:
+  forall cbndx index, valid_smmu index -> valid_smmu_cfg cbndx -> phys_page (SMMU_TTBR index cbndx) = SMMU_TTBR index cbndx.
+
+Hypothesis or_index_range_8192:
+  forall addr n (Haddr: 0 <= addr) (Hn: 0 <= n),
+    addr <= Z.lor addr ((Z.land n 1023) * 8) < addr + 8192.
+
+Hypothesis or_index_ne_cond_8192:
+  forall n m a b (diff: SMMU_POOL_START + n * 4096 * 2 <> SMMU_POOL_START + m * 4096 * 2 \/ (Z.land a 1023) <> Z.land b 1023),
+    Z.lor (SMMU_POOL_START + n * 4096 * 2) ((Z.land a 1023) * 8) <> Z.lor (SMMU_POOL_START + m * 4096 * 2) ((Z.land b 1023) * 8).
+
+Hypothesis or_index_range:
+  forall addr n (Haddr: 0 <= addr) (Hn: 0 <= n),
+    addr <= Z.lor addr ((Z.land n 511) * 8) < addr + 4096.
+
+Hypothesis pte_same_cond:
+  forall addr addr'
+    (Hvalid: valid_smmu_addr addr)
+    (Hvalid': valid_smmu_addr addr'),
+    stage2_pgd_index addr = stage2_pgd_index addr' /\
+    pmd_index addr = pmd_index addr' /\ pte_index addr = pte_index addr' <->
+    addr / PAGE_SIZE = addr' / PAGE_SIZE.
+
+Hypothesis pgd_pool_ne_pmd_next:
+  forall addr a b lspt (Hvalid: valid_lspt lspt) (Ha: 0 <= a) (Hb: 0 <= b),
+    Z.lor (phys_page (addr @ (spt_pgd_pool lspt))) (Z.land a 511 * 8) <>
+    Z.lor (spt_pmd_next lspt) (Z.land b 511 * 8).
+
+Hypothesis vttbr_pool_ne_pgd_next:
+  forall addr a b lspt (Hvalid: valid_lspt lspt) (Ha: 0 <= a) (Hb: 0 <= b),
+    Z.lor (phys_page (addr @ (spt_vttbr_pool lspt))) (Z.land a 511 * 8) <>
+    Z.lor (spt_pgd_next lspt) (Z.land b 511 * 8).
+
+Hypothesis pgd_index_diff_res_diff:
+  forall addr addr0 cbndx index cbndx0 index0 lspt (Hvalid: valid_lspt lspt),
+    let pgd_idx := stage2_pgd_index addr in
+    let pgd_idx0 := stage2_pgd_index addr0 in
+    let vttbr := SMMU_TTBR index cbndx in
+    let vttbr0 := SMMU_TTBR index0 cbndx0 in
+    let pgd_p := Z.lor vttbr (pgd_idx * 8) in
+    let pgd := pgd_p @ (spt_vttbr_pool lspt) in
+    let pgd_p0 := Z.lor vttbr0 (pgd_idx0 * 8) in
+    let pgd0 := pgd_p0 @ (spt_vttbr_pool lspt) in
+    forall (Hpgd_nz: pgd <> 0) (Hpgd0_nz: pgd0 <> 0),
+      vttbr <> vttbr0 \/ pgd_idx <> pgd_idx0 -> phys_page pgd <> phys_page pgd0.
+
+Hypothesis pmd_index_diff_res_diff:
+  forall addr addr0 cbndx index cbndx0 index0 lspt (Hvalid: valid_lspt lspt),
+    let pgd_idx := stage2_pgd_index addr in
+    let pgd_idx0 := stage2_pgd_index addr0 in
+    let pmd_idx := pmd_index addr in
+    let pmd_idx0 :=pmd_index addr0 in
+    let vttbr := SMMU_TTBR index cbndx in
+    let vttbr0 := SMMU_TTBR index0 cbndx0 in
+    let pgd_p := Z.lor vttbr (pgd_idx * 8) in
+    let pgd := pgd_p @ (spt_vttbr_pool lspt) in
+    let pgd_p0 := Z.lor vttbr0 (pgd_idx0 * 8) in
+    let pgd0 := pgd_p0 @ (spt_vttbr_pool lspt) in
+    let pmd_p := Z.lor (phys_page pgd) (pmd_idx * 8) in
+    let pmd := pmd_p @ (spt_pgd_pool lspt) in
+    let pmd_p0 := Z.lor (phys_page pgd0) (pmd_idx0 * 8) in
+    let pmd0 := pmd_p0 @ (spt_pgd_pool lspt) in
+    forall (Hpgd_nz: pgd <> 0) (Hpgd0_nz: pgd0 <> 0) (Hpmd_nz: pmd <> 0) (Hpmd0_nz: pmd0 <> 0),
+      vttbr <> vttbr0 \/ pgd_idx <> pgd_idx0 \/ pmd_idx <> pmd_idx0 -> phys_page pmd <> phys_page pmd0.
+
 Section MmioSPTWalkProofHigh.
 
   Local Open Scope string_scope.
@@ -62,45 +167,6 @@ Section MmioSPTWalkProofHigh.
     Context `{Hstencil: Stencil}.
     Context `{Hmem: Mem.MemoryModelX}.
     Context `{Hmwd: UseMemWithData mem}.
-
-    Inductive relate_entry (cbndx: Z) (index: Z) (hspt: SPT) (lspt: SPT): Z -> Z -> Z -> Prop :=
-    | RELATE_ENTRY:
-        forall addr pfn pte
-          (Hpfn:  pfn = phys_page pte / PAGE_SIZE)
-          (Hpte: let vttbr_pa := SMMU_TTBR index cbndx in
-                 let pgd_idx := stage2_pgd_index addr in
-                 let pgd_p := Z.lor vttbr_pa (pgd_idx * 8) in
-                 let pgd := ZMap.get pgd_p (spt_vttbr_pool lspt) in
-                 let pgd_pa := phys_page pgd in
-                 ((pgd = 0 /\ pte = 0) \/
-                  (pgd <> 0 /\ let pmd_idx := pmd_index addr in
-                             let pmd_p := Z.lor pgd_pa (pmd_idx * 8) in
-                             let pmd := ZMap.get pmd_p (spt_pgd_pool lspt) in
-                             let pmd_pa := phys_page pmd in
-                             (pmd = 0 /\ pte = 0) \/
-                             (pmd <> 0 /\ let pte_idx := pte_index addr in
-                                        let pte_p := Z.lor pmd_pa (pte_idx * 8) in
-                                        ZMap.get pte_p (spt_pmd_pool lspt) = pte)))),
-          relate_entry cbndx index hspt lspt addr pfn pte.
-
-    Inductive valid_lspt (lspt: SPT) : Prop :=
-    | VALID_LSPT
-        (Hvttbr_pool_range: forall p, is_int64 (p @ (spt_vttbr_pool lspt)) = true)
-        (Hpgd_pool_range: forall p, is_int64 (p @ (spt_pgd_pool lspt)) = true)
-        (Hpmd_pool_range: forall p, is_int64 (p @ (spt_pmd_pool lspt)) = true)
-        (Hpgd_next_range: SMMU_PGD_START <= spt_pgd_next lspt <= SMMU_PMD_START)
-        (Hpmd_next_range: SMMU_PMD_START <= spt_pmd_next lspt <= SMMU_POOL_END)
-        (Hpgd_next_align: phys_page (spt_pgd_next lspt) = (spt_pgd_next lspt))
-        (Hpmd_next_align: phys_page (spt_pmd_next lspt) = (spt_pmd_next lspt))
-        (Hpgd_next: forall addr, addr >= spt_pgd_next lspt -> addr @ (spt_pgd_pool lspt) = 0)
-        (Hpmd_next: forall addr, addr >= spt_pmd_next lspt -> addr @ (spt_pmd_pool lspt) = 0)
-        (Hvttbr_pool: forall addr, addr @ (spt_vttbr_pool lspt) = 0 \/
-                              (SMMU_PGD_START <= phys_page (addr @ (spt_vttbr_pool lspt)) < spt_pgd_next lspt /\
-                               (phys_page (addr @ (spt_vttbr_pool lspt))) @ (spt_pgd_par lspt) = addr))
-        (Hpgd_pool: forall addr, addr @ (spt_pgd_pool lspt) = 0 \/
-                            (SMMU_PMD_START <= phys_page (addr @ (spt_pgd_pool lspt)) < spt_pmd_next lspt /\
-                             (phys_page (addr @ (spt_pgd_pool lspt))) @ (spt_pmd_par lspt) = addr)):
-        valid_lspt lspt.
 
     Inductive relate_spt : SPT -> SPT -> Prop :=
     | RELATE_SPT:
@@ -191,79 +257,6 @@ Section MmioSPTWalkProofHigh.
            set_smmu_pte_spec
            check64_spec
            panic_spec.
-
-      Lemma vttbr_val: forall cbndx index, valid_smmu index -> valid_smmu_cfg cbndx -> phys_page (SMMU_TTBR index cbndx) = SMMU_TTBR index cbndx.
-      Admitted.
-
-      Lemma or_index_range_8192:
-        forall addr n (Haddr: 0 <= addr) (Hn: 0 <= n),
-          addr <= Z.lor addr ((Z.land n 1023) * 8) < addr + 8192.
-      Admitted.
-
-      Lemma or_index_ne_cond_8192:
-        forall n m a b (diff: SMMU_POOL_START + n * 4096 * 2 <> SMMU_POOL_START + m * 4096 * 2 \/ (Z.land a 1023) <> Z.land b 1023),
-          Z.lor (SMMU_POOL_START + n * 4096 * 2) ((Z.land a 1023) * 8) <> Z.lor (SMMU_POOL_START + m * 4096 * 2) ((Z.land b 1023) * 8).
-      Admitted.
-
-      Lemma or_index_range:
-        forall addr n (Haddr: 0 <= addr) (Hn: 0 <= n),
-          addr <= Z.lor addr ((Z.land n 511) * 8) < addr + 4096.
-      Admitted.
-
-      Lemma pte_same_cond:
-        forall addr addr'
-          (Hvalid: valid_smmu_addr addr)
-          (Hvalid': valid_smmu_addr addr'),
-          stage2_pgd_index addr = stage2_pgd_index addr' /\
-          pmd_index addr = pmd_index addr' /\ pte_index addr = pte_index addr' <->
-          addr / PAGE_SIZE = addr' / PAGE_SIZE.
-      Admitted.
-
-      Lemma pgd_pool_ne_pmd_next:
-        forall addr a b lspt (Hvalid: valid_lspt lspt) (Ha: 0 <= a) (Hb: 0 <= b),
-          Z.lor (phys_page (addr @ (spt_pgd_pool lspt))) (Z.land a 511 * 8) <>
-          Z.lor (spt_pmd_next lspt) (Z.land b 511 * 8).
-      Admitted.
-
-      Lemma vttbr_pool_ne_pgd_next:
-        forall addr a b lspt (Hvalid: valid_lspt lspt) (Ha: 0 <= a) (Hb: 0 <= b),
-          Z.lor (phys_page (addr @ (spt_vttbr_pool lspt))) (Z.land a 511 * 8) <>
-          Z.lor (spt_pgd_next lspt) (Z.land b 511 * 8).
-      Admitted.
-
-      Lemma pgd_index_diff_res_diff:
-        forall addr addr0 cbndx index cbndx0 index0 lspt (Hvalid: valid_lspt lspt),
-          let pgd_idx := stage2_pgd_index addr in
-          let pgd_idx0 := stage2_pgd_index addr0 in
-          let vttbr := SMMU_TTBR index cbndx in
-          let vttbr0 := SMMU_TTBR index0 cbndx0 in
-          let pgd_p := Z.lor vttbr (pgd_idx * 8) in
-          let pgd := pgd_p @ (spt_vttbr_pool lspt) in
-          let pgd_p0 := Z.lor vttbr0 (pgd_idx0 * 8) in
-          let pgd0 := pgd_p0 @ (spt_vttbr_pool lspt) in
-          forall (Hpgd_nz: pgd <> 0) (Hpgd0_nz: pgd0 <> 0),
-            vttbr <> vttbr0 \/ pgd_idx <> pgd_idx0 -> phys_page pgd <> phys_page pgd0.
-      Admitted.
-
-      Lemma pmd_index_diff_res_diff:
-        forall addr addr0 cbndx index cbndx0 index0 lspt (Hvalid: valid_lspt lspt),
-          let pgd_idx := stage2_pgd_index addr in
-          let pgd_idx0 := stage2_pgd_index addr0 in
-          let pmd_idx := pmd_index addr in
-          let pmd_idx0 :=pmd_index addr0 in
-          let vttbr := SMMU_TTBR index cbndx in
-          let vttbr0 := SMMU_TTBR index0 cbndx0 in
-          let pgd_p := Z.lor vttbr (pgd_idx * 8) in
-          let pgd := pgd_p @ (spt_vttbr_pool lspt) in
-          let pgd_p0 := Z.lor vttbr0 (pgd_idx0 * 8) in
-          let pgd0 := pgd_p0 @ (spt_vttbr_pool lspt) in
-          let pmd_p := Z.lor (phys_page pgd) (pmd_idx * 8) in
-          let pmd := pmd_p @ (spt_pgd_pool lspt) in
-          let pmd_p0 := Z.lor (phys_page pgd0) (pmd_idx0 * 8) in
-          let pmd0 := pmd_p0 @ (spt_pgd_pool lspt) in
-          forall (Hpgd_nz: pgd <> 0) (Hpgd0_nz: pgd0 <> 0) (Hpmd_nz: pmd <> 0) (Hpmd0_nz: pmd0 <> 0),
-            vttbr <> vttbr0 \/ pgd_idx <> pgd_idx0 \/ pmd_idx <> pmd_idx0 -> phys_page pmd <> phys_page pmd0.
-      Admitted.
 
       Lemma set_smmu_pt_spec_pgd_exists:
         forall habd habd' labd cbndx index addr pte f

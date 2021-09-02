@@ -1,4 +1,4 @@
-# FaultHandlerSpec
+# Spec
 
 ```coq
 Require Import Coqlib.
@@ -41,6 +41,7 @@ Section FaultHandlerSpec.
     when esr == read_esr_el2_spec adt;
     rely is_int esr;
     when ret, adt' == emulate_mmio_spec (VZ64 addr) esr adt;
+    rely is_int ret;
     if ret =? INVALID then
       map_page_host_spec (VZ64 addr) adt'
     else
@@ -52,23 +53,30 @@ Section FaultHandlerSpec.
     when vcpuid == get_cur_vcpuid_spec adt;
     rely is_vcpu vcpuid;
     when' arg == get_shadow_ctxt_spec vmid vcpuid X0 adt;
+    rely is_int64 arg;
     when' addr == get_shadow_ctxt_spec vmid vcpuid X2 adt;
+    rely is_int64 addr;
     when' size == get_shadow_ctxt_spec vmid vcpuid X3 adt;
+    rely is_int64 size;
     if (HOSTVISOR <? vmid) && (vmid <? COREVISOR) then
       if (arg =? HVC_KVM_SET_DESC_PFN) then
         when adt' == grant_stage2_sg_gpa_spec vmid (VZ64 addr) (VZ64 size) adt;
         when ret == check_spec 0 adt';
+        rely is_int ret;
         Some (adt', ret)
       else if (arg =? HVC_KVM_UNSET_DESC_PFN) then
         when adt' == revoke_stage2_sg_gpa_spec vmid (VZ64 addr) (VZ64 size) adt;
         when ret == check_spec 0 adt';
+        rely is_int ret;
         Some (adt', ret)
       else
         when ret == check_spec 1 adt;
+        rely is_int ret;
         Some (adt, ret)
     else
       when adt' == panic_spec adt;
       when ret == check_spec 0 adt';
+      rely is_int ret;
       Some (adt', ret).
 
 End FaultHandlerSpec.

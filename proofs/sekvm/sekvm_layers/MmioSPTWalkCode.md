@@ -1,4 +1,4 @@
-# MmioSPTWalkCode
+# Code
 
 ```coq
 Require Import Coqlib.

@@ -1,4 +1,4 @@
-# BootCoreRefine
+# ProofHigh
 
 ```coq
 Require Import Coqlib.
@@ -32,6 +32,7 @@ Require Import liblayers.compat.CompatGenSem.
 
 Require Import BootCore.Spec.
 Require Import AbstractMachine.Spec.
+Require Import Locks.Spec.
 Require Import RData.
 Require Import Constants.
 Require Import VMPower.Layer.
@@ -161,14 +162,6 @@ Section BootCoreProofHigh.
       Qed.
 
     End FreshPrim.
-
-    Section PassthroughPrim.
-
-      Lemma passthrough_correct:
-        sim (crel HDATA LDATA) BootCore_passthrough VMPower.
-        Admitted.
-
-    End PassthroughPrim.
 
   End WITHMEM.
 

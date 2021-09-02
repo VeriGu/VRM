@@ -1,4 +1,4 @@
-# CtxtSwitchSpec
+# Spec
 
 ```coq
 Require Import Coqlib.
@@ -49,15 +49,21 @@ Section CtxtSwitchSpec.
     when adt4 == timer_enable_traps_spec adt3;
     when adt5 == save_shadow_kvm_regs_spec adt4;
     when vmid == get_cur_vmid_spec adt5;
+    rely is_int vmid;
     when vcpuid == get_cur_vcpuid_spec adt5;
+    rely is_int vcpuid;
     set_vcpu_inactive_spec vmid vcpuid adt5.
 
   Definition restore_vm_spec  (adt: RData) : option RData :=
     when cur_vmid == get_cur_vmid_spec adt;
+    rely is_int cur_vmid;
     when cur_vcpuid == get_cur_vcpuid_spec adt;
+    rely is_int cur_vcpuid;
     when' vmid == get_shadow_ctxt_spec cur_vmid cur_vcpuid X0 adt;
+    rely is_int vmid;
     if (HOSTVISOR <? vmid) && (vmid <? COREVISOR) then
       when' vcpuid, adt0 == get_int_run_vcpuid_spec vmid adt;
+      rely is_int vcpuid;
       if (0 <=? vcpuid) && (vcpuid <? VCPU_PER_VM) then
         when adt' == set_per_cpu_spec vmid vcpuid adt0;
         when adt1 == set_vcpu_active_spec vmid vcpuid adt';

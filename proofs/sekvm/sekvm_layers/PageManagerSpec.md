@@ -1,4 +1,4 @@
-# PageManagerSpec
+# Spec
 
 ```coq
 Require Import Coqlib.
@@ -34,7 +34,7 @@ Section PageManagerSpec.
   Definition get_pfn_owner_spec (pfn: Z64) (adt: RData) : option Z :=
     match pfn with
     | VZ64 pfn =>
-      rely is_pfn pfn;
+      rely is_gfn pfn;
       if halt adt then Some 0 else
       let id := S2PAGE_ID in
       match ZMap.get id (lock adt) with
@@ -49,7 +49,7 @@ Section PageManagerSpec.
   Definition set_pfn_owner_spec (pfn: Z64) (vmid: Z) (adt: RData) : option RData :=
     match pfn with
     | VZ64 pfn =>
-      rely is_pfn pfn;
+      rely is_gfn pfn;
       if halt adt then Some adt else
       let id := S2PAGE_ID in
       match ZMap.get id (lock adt) with
@@ -67,7 +67,7 @@ Section PageManagerSpec.
   Definition get_pfn_count_spec (pfn: Z64) (adt: RData) : option Z :=
     match pfn with
     | VZ64 pfn =>
-      rely is_pfn pfn;
+      rely is_gfn pfn;
       if halt adt then Some 0 else
       let id := S2PAGE_ID in
       match ZMap.get id (lock adt) with
@@ -82,7 +82,7 @@ Section PageManagerSpec.
   Definition set_pfn_count_spec (pfn: Z64) (count: Z) (adt: RData) : option RData :=
     match pfn with
     | VZ64 pfn =>
-      rely is_pfn pfn;
+      rely is_gfn pfn;
       if halt adt then Some adt else
       let id := S2PAGE_ID in
       match ZMap.get id (lock adt) with
@@ -99,7 +99,7 @@ Section PageManagerSpec.
   Definition get_pfn_map_spec (pfn: Z64) (adt: RData) : option Z64 :=
     match pfn with
     | VZ64 pfn =>
-      rely is_pfn pfn;
+      rely is_gfn pfn;
       if halt adt then Some (VZ64 0) else
       let id := S2PAGE_ID in
       match ZMap.get id (lock adt) with
@@ -114,7 +114,7 @@ Section PageManagerSpec.
   Definition set_pfn_map_spec (pfn: Z64) (gfn: Z64) (adt: RData) : option RData :=
     match pfn, gfn with
     | VZ64 pfn, VZ64 gfn =>
-      rely is_pfn pfn;
+      rely is_gfn pfn;
       if halt adt then Some adt else
       let id := S2PAGE_ID in
       match ZMap.get id (lock adt) with
@@ -141,7 +141,7 @@ Section PageManagerSpecLow.
   Definition get_pfn_owner_spec0 (pfn: Z64) (adt: RData) : option Z :=
     match pfn with
     | VZ64 pfn =>
-      rely is_pfn pfn;
+      rely is_gfn pfn;
       when' index == get_s2_page_index_spec (VZ64 (pfn * PAGE_SIZE)) adt;
       rely is_int64 index;
       if index =? INVALID64 then
@@ -156,7 +156,7 @@ Section PageManagerSpecLow.
   Definition set_pfn_owner_spec0 (pfn: Z64) (vmid: Z) (adt: RData) : option RData :=
     match pfn with
     | VZ64 pfn =>
-      rely is_pfn pfn;
+      rely is_gfn pfn;
       when' index == get_s2_page_index_spec (VZ64 (pfn * PAGE_SIZE)) adt;
       rely is_int64 index;
       if index =? INVALID64 then
@@ -168,7 +168,7 @@ Section PageManagerSpecLow.
   Definition get_pfn_count_spec0 (pfn: Z64) (adt: RData) : option Z :=
     match pfn with
     | VZ64 pfn =>
-      rely is_pfn pfn;
+      rely is_gfn pfn;
       when' index == get_s2_page_index_spec (VZ64 (pfn * PAGE_SIZE)) adt;
       rely is_int64 index;
       if index =? INVALID64 then
@@ -182,7 +182,7 @@ Section PageManagerSpecLow.
   Definition set_pfn_count_spec0 (pfn: Z64) (count: Z) (adt: RData) : option RData :=
     match pfn with
     | VZ64 pfn =>
-      rely is_pfn pfn;
+      rely is_gfn pfn;
       when' index == get_s2_page_index_spec (VZ64 (pfn * PAGE_SIZE)) adt;
       rely is_int64 index;
       if index =? INVALID64 then
@@ -194,7 +194,7 @@ Section PageManagerSpecLow.
   Definition get_pfn_map_spec0 (pfn: Z64) (adt: RData) : option Z64 :=
     match pfn with
     | VZ64 pfn =>
-      rely is_pfn pfn;
+      rely is_gfn pfn;
       when' index == get_s2_page_index_spec (VZ64 (pfn * PAGE_SIZE)) adt;
       rely is_int64 index;
       if index =? INVALID64 then
@@ -208,7 +208,7 @@ Section PageManagerSpecLow.
   Definition set_pfn_map_spec0 (pfn: Z64) (gfn: Z64) (adt: RData) : option RData :=
     match pfn, gfn with
     | VZ64 pfn, VZ64 gfn =>
-      rely is_pfn pfn;
+      rely is_gfn pfn;
       when' index == get_s2_page_index_spec (VZ64 (pfn * PAGE_SIZE)) adt;
       rely is_int64 index;
       if index =? INVALID64 then

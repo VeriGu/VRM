@@ -1,4 +1,4 @@
-# BootOpsProofCode
+# ProofLow
 
 ```coq
 Require Import Coqlib.
@@ -47,6 +47,7 @@ Require Import Ctypes.
 
 Require Import NPTOps.Spec.
 Require Import AbstractMachine.Spec.
+Require Import Locks.Spec.
 Require Import MemManager.Spec.
 Require Import Ident.
 Require Import BootAux.Spec.

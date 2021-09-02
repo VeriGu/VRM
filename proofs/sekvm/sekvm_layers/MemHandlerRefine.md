@@ -1,4 +1,4 @@
-# MemHandlerRefine
+# ProofHigh
 
 ```coq
 Require Import Coqlib.
@@ -90,8 +90,9 @@ Section MemHandlerProofHigh.
                (Hrel: relate_RData f habd labd),
           exists labd', clear_vm_stage2_range_spec vmid start size labd = Some labd' /\ relate_RData f habd' labd'.
         Proof.
-          intros until f.
-          solve_refine_proof clear_vm_stage2_range0; repeat hstep; try htrivial.
+          intros. inv Hrel; subst.
+          eexists; split. eassumption.
+          constructor; reflexivity.
         Qed.
 
       Lemma clear_vm_stage2_range_spec_ref:
@@ -110,8 +111,9 @@ Section MemHandlerProofHigh.
                (Hrel: relate_RData f habd labd),
           exists labd', el2_arm_lpae_map_spec iova paddr prot cbndx index labd = Some labd' /\ relate_RData f habd' labd'.
         Proof.
-          intros until f.
-          solve_refine_proof el2_arm_lpae_map0; repeat hstep; try htrivial.
+          intros. inv Hrel; subst.
+          eexists; split. eassumption.
+          constructor; reflexivity.
         Qed.
 
       Lemma el2_arm_lpae_map_spec_ref:
@@ -130,8 +132,9 @@ Section MemHandlerProofHigh.
                (Hrel: relate_RData f habd labd),
           exists labd', kvm_phys_addr_ioremap_spec vmid gpa pa size labd = Some labd' /\ relate_RData f habd' labd'.
         Proof.
-          intros until f.
-          solve_refine_proof kvm_phys_addr_ioremap0; repeat hstep; try htrivial.
+          intros. inv Hrel; subst.
+          eexists; split. eassumption.
+          constructor; reflexivity.
         Qed.
 
       Lemma kvm_phys_addr_ioremap_spec_ref:
@@ -145,14 +148,6 @@ Section MemHandlerProofHigh.
       Qed.
 
     End FreshPrim.
-
-    Section PassthroughPrim.
-
-      Lemma passthrough_correct:
-        sim (crel HDATA LDATA) MemHandler_passthrough CtxtSwitch.
-        Admitted.
-
-    End PassthroughPrim.
 
   End WITHMEM.
 

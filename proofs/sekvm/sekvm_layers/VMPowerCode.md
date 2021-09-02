@@ -1,4 +1,4 @@
-# VMPowerCode
+# Code
 
 ```coq
 Require Import Coqlib.

@@ -1,4 +1,4 @@
-# MmioPTAllocSpec
+# Spec
 
 ```coq
 Require Import Coqlib.

@@ -1,4 +1,4 @@
-# LockOpsQ
+# Layer
 
 ```coq
 Require Import Coqlib.

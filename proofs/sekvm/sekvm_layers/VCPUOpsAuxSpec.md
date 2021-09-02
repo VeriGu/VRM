@@ -1,4 +1,4 @@
-# VCPUOpsAuxSpec
+# Spec
 
 ```coq
 Require Import Coqlib.
@@ -22,6 +22,7 @@ Require Import liblayers.compat.CompatGenSem.
 
 Require Import VMPower.Spec.
 Require Import AbstractMachine.Spec.
+Require Import Locks.Spec.
 Require Import MemoryOps.Spec.
 Require Import MmioOps.Layer.
 Require Import RData.

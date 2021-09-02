@@ -1,4 +1,4 @@
-# MmioOpsProofCode
+# ProofLow
 
 ```coq
 Require Import Coqlib.
@@ -46,6 +46,7 @@ Require Import liblayers.logic.LayerLogicImpl.
 Require Import Ctypes.
 
 Require Import AbstractMachine.Spec.
+Require Import Locks.Spec.
 Require Import MmioOpsAux.Spec.
 Require Import Ident.
 Require Import MmioOps.Spec.

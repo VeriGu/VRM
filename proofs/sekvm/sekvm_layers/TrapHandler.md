@@ -1,4 +1,4 @@
-# TrapHandler
+# Layer
 
 ```coq
 Require Import Coqlib.

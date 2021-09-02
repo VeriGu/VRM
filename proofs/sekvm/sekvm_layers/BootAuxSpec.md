@@ -1,4 +1,4 @@
-# BootAuxSpec
+# Spec
 
 ```coq
 Require Import Coqlib.

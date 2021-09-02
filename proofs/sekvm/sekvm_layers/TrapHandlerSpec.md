@@ -1,4 +1,4 @@
-# TrapHandlerSpec
+# Spec
 
 ```coq
 Require Import Coqlib.
@@ -389,7 +389,7 @@ Section ConcurrentSpec.
       if load_idx <? MAX_LOAD_INFO_NUM then
         let pgnum := (size + 4095) / PAGE_SIZE in
         let remap := next_remap_ptr core in
-        if remap + pgnum * PAGE_SIZE <? REMAP_END then
+        if (0 <? pgnum) && (remap + pgnum * PAGE_SIZE <? REMAP_END) then
           let core' := core {next_remap_ptr : remap + pgnum * PAGE_SIZE} in
           let info' := info {vm_next_load_info: load_idx + 1}
                             {vm_load_addr: (vm_load_addr (VB info)) # load_idx == load_addr}
@@ -435,14 +435,11 @@ Section ConcurrentSpec.
   Definition local_verify_vm vmid sdt :=
     let info := vmid @ (vminfos sdt) in
     let state := vm_state (VS info) in
-    if (INFO_ID + vmid) @ (hlock sdt) then
-      if state =? READY then
-        (sdt, false, Some info)
-      else
-        (sdt {hlock: (hlock sdt) # (INFO_ID + vmid) == false}, true, Some info)
-    else
+    if state =? READY then
       let info' := info {vm_state: VERIFIED} in
-      (sdt {vminfos: (vminfos sdt) # vmid == info'} {hlock: (hlock sdt) # (INFO_ID + vmid) == true}, false, Some info').
+      (sdt {vminfos: (vminfos sdt) # vmid == info'}, false, Some info')
+    else
+      (sdt {hlock: (hlock sdt) # (INFO_ID + vmid) == false}, true, Some info).
 
   Definition local_free_smmu_pgd cbndx index sdt :=
     let vmid := (smmu_id index cbndx) @ (smmu_vmid sdt) in
@@ -1639,9 +1636,11 @@ Section TrapHandlerSpec.
           match gfn @ (pt (vmid @ (npts (shared adt)))) with
           | (pfn, level, pte) =>
             if pfn =? 0 then None else
-            if s2_count (pfn @ (s2page (shared adt))) =? 0
-            then Some (pfn @ (flatmem (shared adt)))
-            else Some ((doracle adt) vmid (vmid @ (data_log adt)))
+            if s2_owner (pfn @ (s2page (shared adt))) =? INVALID then None
+            else
+              if s2_count (pfn @ (s2page (shared adt))) =? 0
+              then Some (pfn @ (flatmem (shared adt)))
+              else Some ((doracle adt) vmid (vmid @ (data_log adt)))
           end
         )
       with
@@ -1681,9 +1680,11 @@ Section TrapHandlerSpec.
         match gfn @ (pt (vmid @ (npts (shared adt)))) with
         | (pfn, level, pte) =>
           if pfn =? 0 then None else
-            if s2_count (pfn @ (s2page (shared adt))) =? 0
-            then Some adt {shared: (shared adt) {flatmem: (flatmem (shared adt)) # pfn == val}} {slog: log'}
-            else Some adt {slog: log'}
+            if s2_owner (pfn @ (s2page (shared adt))) =? INVALID then None
+            else
+              if s2_count (pfn @ (s2page (shared adt))) =? 0
+              then Some adt {shared: (shared adt) {flatmem: (flatmem (shared adt)) # pfn == val}} {slog: log'}
+              else Some adt {slog: log'}
         end
     | _, _ => None
     end.
@@ -1714,9 +1715,11 @@ Section TrapHandlerSpec.
           match gfn @ spt with
           | (pfn, pte) =>
             if pfn =? 0 then None else
-            if s2_count (pfn @ (s2page (shared adt))) =? 0
-            then Some (pfn @ (flatmem (shared adt)))
-            else Some ((doracle adt) vmid (vmid @ (data_log adt)))
+            if s2_owner (pfn @ (s2page (shared adt))) =? INVALID then None
+            else
+              if s2_count (pfn @ (s2page (shared adt))) =? 0
+              then Some (pfn @ (flatmem (shared adt)))
+              else Some ((doracle adt) vmid (vmid @ (data_log adt)))
           end
         )
       with
@@ -1760,9 +1763,11 @@ Section TrapHandlerSpec.
         match gfn @ spt with
         | (pfn, pte) =>
           if pfn =? 0 then None else
-            if s2_count (pfn @ (s2page (shared adt))) =? 0
-            then Some adt {shared: (shared adt) {flatmem: (flatmem (shared adt)) # pfn == val}} {slog: log'}
-            else Some adt {slog: log'}
+            if s2_owner (pfn @ (s2page (shared adt))) =? INVALID then None
+            else
+              if s2_count (pfn @ (s2page (shared adt))) =? 0
+              then Some adt {shared: (shared adt) {flatmem: (flatmem (shared adt)) # pfn == val}} {slog: log'}
+              else Some adt {slog: log'}
         end
     | _, _ => None
     end.

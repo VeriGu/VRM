@@ -1,4 +1,4 @@
-# TrapHandlerRawRefine
+# ProofHigh
 
 ```coq
 Require Import Coqlib.
@@ -90,8 +90,9 @@ Section TrapHandlerRawProofHigh.
                (Hrel: relate_RData f habd labd),
           exists labd', host_hvc_handler_raw_spec  labd = Some labd' /\ relate_RData f habd' labd'.
         Proof.
-          intros until f.
-          solve_refine_proof host_hvc_handler_raw0; repeat hstep; try htrivial.
+          intros. inv Hrel; subst.
+          eexists; split. eassumption.
+          constructor; reflexivity.
         Qed.
 
       Lemma host_hvc_handler_raw_spec_ref:
@@ -110,8 +111,9 @@ Section TrapHandlerRawProofHigh.
                (Hrel: relate_RData f habd labd),
           exists labd', host_npt_handler_raw_spec  labd = Some labd' /\ relate_RData f habd' labd'.
         Proof.
-          intros until f.
-          solve_refine_proof host_npt_handler_raw0; repeat hstep; try htrivial.
+          intros. inv Hrel; subst.
+          eexists; split. eassumption.
+          constructor; reflexivity.
         Qed.
 
       Lemma host_npt_handler_raw_spec_ref:
@@ -130,8 +132,9 @@ Section TrapHandlerRawProofHigh.
                (Hrel: relate_RData f habd labd),
           exists labd', host_vcpu_run_handler_raw_spec  labd = Some labd' /\ relate_RData f habd' labd'.
         Proof.
-          intros until f.
-          solve_refine_proof host_vcpu_run_handler_raw0; repeat hstep; try htrivial.
+          intros. inv Hrel; subst.
+          eexists; split. eassumption.
+          constructor; reflexivity.
         Qed.
 
       Lemma host_vcpu_run_handler_raw_spec_ref:
@@ -150,8 +153,9 @@ Section TrapHandlerRawProofHigh.
                (Hrel: relate_RData f habd labd),
           exists labd', vm_exit_handler_raw_spec  labd = Some labd' /\ relate_RData f habd' labd'.
         Proof.
-          intros until f.
-          solve_refine_proof vm_exit_handler_raw0; repeat hstep; try htrivial.
+          intros. inv Hrel; subst.
+          eexists; split. eassumption.
+          constructor; reflexivity.
         Qed.
 
       Lemma vm_exit_handler_raw_spec_ref:
@@ -165,14 +169,6 @@ Section TrapHandlerRawProofHigh.
       Qed.
 
     End FreshPrim.
-
-    Section PassthroughPrim.
-
-      Lemma passthrough_correct:
-        sim (crel HDATA LDATA) TrapHandlerRaw_passthrough TrapDispatcher.
-        Admitted.
-
-    End PassthroughPrim.
 
   End WITHMEM.
 

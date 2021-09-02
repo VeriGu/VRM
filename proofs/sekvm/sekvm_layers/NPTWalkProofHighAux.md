@@ -1,4 +1,4 @@
-# NPTWalkProofHighAux
+# ProofHighAux
 
 ```coq
 Require Import Coqlib.
@@ -1261,4 +1261,12 @@ Proof.
   replace (2 ^ 16) with 65536 by auto with zarith.
   rewrite Z.mul_comm, Z.mul_add_distr_l. auto with zarith.
 Qed.
+
+Hypothesis local_mmap_loop_512:
+  forall gfn_pmd pfn pte pt pt' gfn' pfn'
+    (Hmap: local_mmap_loop (Z.to_nat 512) (gfn_pmd * 512) pfn 2 pte pt = Some (gfn', pfn', pt')),
+  forall gfn' (Hvalid: valid_addr (gfn_pmd * 512 * PAGE_SIZE))
+    (Hvalid': valid_addr (gfn' * PAGE_SIZE)),
+    (gfn' / PTRS_PER_PMD = gfn_pmd -> gfn' @ pt' = (pfn + (gfn' - gfn_pmd * 512), 2, pte)) /\
+    (gfn' / PTRS_PER_PMD <> gfn_pmd -> gfn' @ pt' = gfn' @ pt).
 ```

@@ -1,4 +1,4 @@
-# TrapDispatcherCode
+# Code
 
 ```coq
 Require Import Coqlib.
@@ -1134,7 +1134,7 @@ Definition vm_exit_dispatcher_body :=
         (Sset _ret (Econst_int (Int.repr 0) tuint))
         (Ssequence
           (Sifthenelse (Ebinop Oeq (Etempvar _exit_type tulong)
-                         (Econst_int (Int.repr 23) tuint) tint)
+                         (Econst_int (Int.repr 30) tuint) tint)
             (Scall None
               (Evar core_handle_sys64 (Tfunction Tnil tvoid cc_default)) nil)
             (Sifthenelse (Ebinop Oeq (Etempvar _exit_type tulong)

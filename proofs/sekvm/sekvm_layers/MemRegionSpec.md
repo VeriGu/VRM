@@ -1,4 +1,4 @@
-# MemRegionSpec
+# Spec
 
 ```coq
 Require Import Coqlib.

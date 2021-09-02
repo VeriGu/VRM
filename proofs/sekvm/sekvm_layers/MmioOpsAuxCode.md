@@ -1,4 +1,4 @@
-# MmioOpsAuxCode
+# Code
 
 ```coq
 Require Import Coqlib.

@@ -1,4 +1,4 @@
-# MmioPTWalkRefine
+# ProofHigh
 
 ```coq
 Require Import Coqlib.
@@ -128,8 +128,7 @@ Section MmioPTWalkProofHigh.
            walk_smmu_pte_spec0
            set_smmu_pte_spec
            set_smmu_pte_spec0
-           check64_spec
-           observe_spt.
+           check64_spec.
 
       Lemma walk_smmu_pgd_spec_exists:
         forall habd habd' labd ttbr addr alloc res f
@@ -281,14 +280,6 @@ Section MmioPTWalkProofHigh.
       Qed.
 
     End FreshPrim.
-
-    Section PassthroughPrim.
-
-      Lemma passthrough_correct:
-        sim (crel HDATA LDATA) MmioPTWalk_passthrough MmioPTAlloc.
-        Admitted.
-
-    End PassthroughPrim.
 
   End WITHMEM.
 

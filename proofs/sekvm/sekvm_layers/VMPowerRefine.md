@@ -1,4 +1,4 @@
-# VMPowerRefine
+# ProofHigh
 
 ```coq
 Require Import Coqlib.
@@ -32,6 +32,7 @@ Require Import liblayers.compat.CompatGenSem.
 
 Require Import VMPower.Spec.
 Require Import AbstractMachine.Spec.
+Require Import Locks.Spec.
 Require Import RData.
 Require Import Constants.
 Require Import MemoryOps.Layer.
@@ -149,14 +150,6 @@ Section VMPowerProofHigh.
       Qed.
 
     End FreshPrim.
-
-    Section PassthroughPrim.
-
-      Lemma passthrough_correct:
-        sim (crel HDATA LDATA) VMPower_passthrough MemoryOps.
-        Admitted.
-
-    End PassthroughPrim.
 
   End WITHMEM.
 

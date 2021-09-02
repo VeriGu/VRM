@@ -1,4 +1,4 @@
-# AbstractMachineSpec
+# Spec
 
 ```coq
 Require Import Coqlib.
@@ -105,14 +105,9 @@ Section AbstractMachineSpec.
     end.
 
   Definition incr_now_spec (lk: Z) (adt: RData): option RData :=
-    (* if adt.(shared).(halt) then Some adt else *)
-    (* if negb adt.(icore) || negb adt.(ihost) then None else *)
-
     match ZMap.get lk adt.(log), adt.(bars) with
     | l, Barriered =>
       let l' := TEVENT adt.(curid) (TTICKET INC_NOW) :: l in
-      (* No need to query oracle when unlocking *)
-      (* (ZMap.get lk adt.(oracle)) adt.(curid) l ++ *)
       Some adt {log: ZMap.set lk (l') adt.(log)}
                {bars: BarrierValid}
     | _, _ => None

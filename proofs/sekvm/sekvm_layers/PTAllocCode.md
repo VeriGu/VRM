@@ -1,4 +1,4 @@
-# PTAllocCode
+# Code
 
 ```coq
 Require Import Coqlib.

@@ -1,4 +1,4 @@
-# TrapHandlerRawProofCode
+# ProofLow
 
 ```coq
 Require Import Coqlib.
@@ -111,11 +111,12 @@ Section TrapHandlerRawProofLow.
         forall m d d' env le 
                (Henv: env = PTree.empty _)
                (Hinv: high_level_invariant d)
-               (Hspec: host_hvc_handler_raw_spec0  d = Some d'),
+               (Hspec: host_hvc_handler_raw_spec  d = Some d'),
              exists le', (exec_stmt ge env le ((m, d): mem) host_hvc_handler_raw_body E0 le' (m, d') Out_normal).
       Proof.
-        solve_code_proof Hspec host_hvc_handler_raw_body; admit
+        solve_code_proof Hspec host_hvc_handler_raw_body; eexists; solve_proof_low.
       Qed.
+
     End BodyProof.
 
     Theorem host_hvc_handler_raw_code_correct:
@@ -126,9 +127,10 @@ Section TrapHandlerRawProofLow.
       fbigstep_pre L'.
       fbigstep (host_hvc_handler_raw_body_correct s (Genv.globalenv p) makeglobalenv
                b0 Hb0fs Hb0fp b1 Hb1fs Hb1fp b2 Hb2fs Hb2fp m'0 labd labd'
-               (PTree.empty _) (bind_parameter_temps' (fn_params f_host_hvc_handler_raw ) ( :: nil)
+               (PTree.empty _) (bind_parameter_temps' (fn_params f_host_hvc_handler_raw ) (nil)
                (create_undef_temps (fn_temps f_host_hvc_handler_raw)))) hinv.
     Qed.
+
   End host_hvc_handler_raw_proof.
 
   Section host_npt_handler_raw_proof.
@@ -170,11 +172,12 @@ Section TrapHandlerRawProofLow.
         forall m d d' env le 
                (Henv: env = PTree.empty _)
                (Hinv: high_level_invariant d)
-               (Hspec: host_npt_handler_raw_spec0  d = Some d'),
+               (Hspec: host_npt_handler_raw_spec  d = Some d'),
              exists le', (exec_stmt ge env le ((m, d): mem) host_npt_handler_raw_body E0 le' (m, d') Out_normal).
       Proof.
-        solve_code_proof Hspec host_npt_handler_raw_body; admit
+        solve_code_proof Hspec host_npt_handler_raw_body; eexists; solve_proof_low.
       Qed.
+
     End BodyProof.
 
     Theorem host_npt_handler_raw_code_correct:
@@ -185,9 +188,10 @@ Section TrapHandlerRawProofLow.
       fbigstep_pre L'.
       fbigstep (host_npt_handler_raw_body_correct s (Genv.globalenv p) makeglobalenv
                b0 Hb0fs Hb0fp b1 Hb1fs Hb1fp b2 Hb2fs Hb2fp m'0 labd labd'
-               (PTree.empty _) (bind_parameter_temps' (fn_params f_host_npt_handler_raw ) ( :: nil)
+               (PTree.empty _) (bind_parameter_temps' (fn_params f_host_npt_handler_raw ) (nil)
                (create_undef_temps (fn_temps f_host_npt_handler_raw)))) hinv.
     Qed.
+
   End host_npt_handler_raw_proof.
 
   Section host_vcpu_run_handler_raw_proof.
@@ -233,14 +237,15 @@ Section TrapHandlerRawProofLow.
                                          Tnil tvoid cc_default).
 
       Lemma host_vcpu_run_handler_raw_body_correct:
-        forall m d d' env le 
+        forall m d d' env le
                (Henv: env = PTree.empty _)
                (Hinv: high_level_invariant d)
-               (Hspec: host_vcpu_run_handler_raw_spec0  d = Some d'),
+               (Hspec: host_vcpu_run_handler_raw_spec  d = Some d'),
              exists le', (exec_stmt ge env le ((m, d): mem) host_vcpu_run_handler_raw_body E0 le' (m, d') Out_normal).
       Proof.
-        solve_code_proof Hspec host_vcpu_run_handler_raw_body; admit
+        solve_code_proof Hspec host_vcpu_run_handler_raw_body; eexists; solve_proof_low.
       Qed.
+
     End BodyProof.
 
     Theorem host_vcpu_run_handler_raw_code_correct:
@@ -251,9 +256,10 @@ Section TrapHandlerRawProofLow.
       fbigstep_pre L'.
       fbigstep (host_vcpu_run_handler_raw_body_correct s (Genv.globalenv p) makeglobalenv
                b0 Hb0fs Hb0fp b1 Hb1fs Hb1fp b2 Hb2fs Hb2fp b3 Hb3fs Hb3fp m'0 labd labd'
-               (PTree.empty _) (bind_parameter_temps' (fn_params f_host_vcpu_run_handler_raw ) ( :: nil)
+               (PTree.empty _) (bind_parameter_temps' (fn_params f_host_vcpu_run_handler_raw ) (nil)
                (create_undef_temps (fn_temps f_host_vcpu_run_handler_raw)))) hinv.
     Qed.
+
   End host_vcpu_run_handler_raw_proof.
 
   Section vm_exit_handler_raw_proof.
@@ -351,11 +357,12 @@ Section TrapHandlerRawProofLow.
         forall m d d' env le 
                (Henv: env = PTree.empty _)
                (Hinv: high_level_invariant d)
-               (Hspec: vm_exit_handler_raw_spec0  d = Some d'),
+               (Hspec: vm_exit_handler_raw_spec  d = Some d'),
              exists le', (exec_stmt ge env le ((m, d): mem) vm_exit_handler_raw_body E0 le' (m, d') Out_normal).
       Proof.
-        solve_code_proof Hspec vm_exit_handler_raw_body; admit
+        solve_code_proof Hspec vm_exit_handler_raw_body; eexists; solve_proof_low.
       Qed.
+
     End BodyProof.
 
     Theorem vm_exit_handler_raw_code_correct:
@@ -366,9 +373,10 @@ Section TrapHandlerRawProofLow.
       fbigstep_pre L'.
       fbigstep (vm_exit_handler_raw_body_correct s (Genv.globalenv p) makeglobalenv
                b0 Hb0fs Hb0fp b1 Hb1fs Hb1fp b2 Hb2fs Hb2fp b3 Hb3fs Hb3fp b4 Hb4fs Hb4fp b5 Hb5fs Hb5fp b6 Hb6fs Hb6fp b7 Hb7fs Hb7fp b8 Hb8fs Hb8fp b9 Hb9fs Hb9fp b10 Hb10fs Hb10fp m'0 labd labd'
-               (PTree.empty _) (bind_parameter_temps' (fn_params f_vm_exit_handler_raw ) ( :: nil)
+               (PTree.empty _) (bind_parameter_temps' (fn_params f_vm_exit_handler_raw ) (nil)
                (create_undef_temps (fn_temps f_vm_exit_handler_raw)))) hinv.
     Qed.
+
   End vm_exit_handler_raw_proof.
 
 End TrapHandlerRawProofLow.

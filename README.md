@@ -152,21 +152,13 @@ and is used throughout the layer refinement proofs.
 
 #### 1.3.3 Top-layer Security
 
+* Invariant definitions: [Invs][]
+
+* Invariant proof: [InvProofs][]
+
 * Security property definition: [SecurityDef][]
 
-* Noninterference tactics: [NoninterferenceAux][]
-
-* Noninterference lemmas
-
-  - [NoninterferenceLemma1][]
-
-  - [NoninterferenceLemma2][]
-
-  - [NoninterferenceLemma3][]
-
-* Big-Step Noninterference Theorem
-
-  - [Noninterference][]
+* Noninterference proof: [Noninterference][]
 
 
 ## 2. Performance Evaluation
@@ -634,11 +626,7 @@ To shutdown VMs from the client, run:
 [TrapHandlerProofCode]: proofs/sekvm/sekvm_layers/TrapHandlerProofCode.md
 [TrapHandlerCode]: proofs/sekvm/sekvm_layers/TrapHandlerCode.md
 [TrapHandlerRefine]: proofs/sekvm/sekvm_layers/TrapHandlerRefine.md
-[Invariant]: proofs/sekvm/sekvm_layers/Invariant.md
-[InvariantProof]: proofs/sekvm/sekvm_layers/InvariantProof.md
-[SecurityDef]: proofs/sekvm/sekvm_layers/SecurityDef.md
-[NoninterferenceAux]: proofs/sekvm/sekvm_layers/NoninterferenceAux.md
-[NoninterferenceLemma1]: proofs/sekvm/sekvm_layers/NoninterferenceLemma1.md
-[NoninterferenceLemma2]: proofs/sekvm/sekvm_layers/NoninterferenceLemma2.md
-[NoninterferenceLemma3]: proofs/sekvm/sekvm_layers/NoninterferenceLemma3.md
-[Noninterference]: proofs/sekvm/sekvm_layers/Noninterference.md
+[Invs]: proofs/sekvm/sekvm_layers/SecurityInvs.md
+[InvProofs]: proofs/sekvm/sekvm_layers/SecurityInvProofs.md
+[SecurityDef]: proofs/sekvm/sekvm_layers/SecuritySecurityDef.md
+[Noninterference]: proofs/sekvm/sekvm_layers/SecurityNoninterference.md

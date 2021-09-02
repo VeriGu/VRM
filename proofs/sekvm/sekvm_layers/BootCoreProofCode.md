@@ -1,4 +1,4 @@
-# BootCoreProofCode
+# ProofLow
 
 ```coq
 Require Import Coqlib.
@@ -46,6 +46,7 @@ Require Import liblayers.logic.LayerLogicImpl.
 Require Import Ctypes.
 
 Require Import AbstractMachine.Spec.
+Require Import Locks.Spec.
 Require Import BootCore.Code.
 Require Import VMPower.Layer.
 Require Import Ident.

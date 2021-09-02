@@ -1,4 +1,4 @@
-# TrapHandlerRawSpec
+# Spec
 
 ```coq
 Require Import Coqlib.
@@ -56,8 +56,10 @@ Section TrapHandlerRawSpec.
     when adt1 == vm_to_core_spec adt;
     when adt2 == exit_populate_fault_spec adt1;
     when' ec == get_shadow_ctxt_spec vmid vcpuid EC adt2;
+    rely is_int64 ec;
     if ec =? ARM_EXCEPTION_TRAP then
       when ret, adt3 == vm_exit_dispatcher_spec vmid vcpuid adt2;
+      rely is_int ret;
       if ret =? 0 then
         core_to_vm_spec adt3
       else

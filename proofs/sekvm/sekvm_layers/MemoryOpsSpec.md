@@ -1,4 +1,4 @@
-# MemoryOpsSpec
+# Spec
 
 ```coq
 Require Import Coqlib.

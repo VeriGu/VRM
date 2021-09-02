@@ -1,4 +1,4 @@
-# PTWalkProofCode
+# ProofLow
 
 ```coq
 Require Import Coqlib.

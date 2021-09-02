@@ -1,4 +1,4 @@
-# VCPUOps
+# Layer
 
 ```coq
 Require Import Coqlib.
@@ -399,6 +399,25 @@ Section VCPUOpsLayer.
       constructor.
     Qed.
 
+    Global Instance set_vcpu_active_inv: PreservesInvariants set_vcpu_active_spec.
+    Proof.
+      constructor; intros; simpl; eauto.
+      constructor.
+    Qed.
+
+    Global Instance set_vcpu_inactive_inv: PreservesInvariants set_vcpu_inactive_spec.
+    Proof.
+      constructor; intros; simpl; eauto.
+      constructor.
+    Qed.
+
+    Global Instance get_int_run_vcpuid_inv: PreservesInvariants get_int_run_vcpuid_spec.
+    Proof.
+      constructor; intros; simpl; eauto.
+      constructor.
+    Qed.
+
+
   End InvProof.
 
   Section LayerDef.
@@ -459,6 +478,9 @@ Section VCPUOpsLayer.
           ⊕ dev_store_ref ↦ gensem dev_store_ref_spec
           ⊕ core_handle_sys64 ↦ gensem core_handle_sys64_spec
           ⊕ vm_to_core ↦ gensem vm_to_core_spec
+          ⊕ set_vcpu_active ↦ gensem set_vcpu_active_spec
+          ⊕ set_vcpu_inactive ↦ gensem set_vcpu_inactive_spec
+          ⊕ get_int_run_vcpuid ↦ gensem get_int_run_vcpuid_spec
           ⊕ get_shadow_ctxt ↦ gensem get_shadow_ctxt_spec.
 
     Definition VCPUOps := VCPUOps_fresh ⊕ VCPUOps_passthrough.

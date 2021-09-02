@@ -1,4 +1,4 @@
-# BootOpsRefine
+# ProofHigh
 
 ```coq
 Require Import Coqlib.
@@ -37,6 +37,7 @@ Require Import HypsecCommLib.
 Require Import BootOps.Spec.
 Require Import BootOps.Layer.
 Require Import AbstractMachine.Spec.
+Require Import Locks.Spec.
 Require Import MemManager.Spec.
 Require Import NPTOps.Spec.
 Require Import MmioSPTOps.Spec.

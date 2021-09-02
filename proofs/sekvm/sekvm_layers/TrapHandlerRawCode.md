@@ -1,4 +1,4 @@
-# TrapHandlerRawCode
+# Code
 
 ```coq
 Require Import Coqlib.
@@ -241,7 +241,7 @@ Definition vm_exit_handler_raw_body :=
                         (Evar core_to_host (Tfunction Tnil tvoid cc_default))
                         nil)))))
               (Sifthenelse (Ebinop Oeq (Etempvar _ec tulong)
-                             (Econst_int (Int.repr 24) tuint) tint)
+                             (Econst_int (Int.repr 31) tuint) tint)
                 (Ssequence
                   (Scall None (Evar save_vm (Tfunction Tnil tvoid cc_default))
                     nil)

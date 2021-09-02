@@ -137,40 +137,6 @@ Proof.
   now rewrite <- (Pos.iter_swap_gen _ _ _ xO) by trivial. now assert (0 > Z.neg p).
 Qed.
 
-(*
-Lemma shiftl_spec_low a n m : m<n ->
- Z.testbit (Z.shiftl a n) m = false.
-Proof.
- intros H. destruct n as [|n|n], m as [|m|m]; try easy; simpl Z.shiftl.
- destruct (Pos.succ_pred_or n) as [-> | <-];
-  rewrite ?Pos.iter_succ; apply Z.testbit_even_0.
- destruct a as [ |a|a].
- replace (Pos.iter n (Z.mul 2) 0) with 0
-  by (apply Pos.iter_invariant; intros; subst; trivial).
- apply Z.testbit_0_l.
- rewrite <- (Pos.iter_swap_gen _ _ _ xO) by trivial.
- rewrite testbit_Zpos by easy.
- exact (N.shiftl_spec_low (N.pos a) (N.pos n) (N.pos m) H).
- rewrite <- (Pos.iter_swap_gen _ _ _ xO) by trivial.
- rewrite testbit_Zneg by easy.
- now rewrite (N.pos_pred_shiftl_low a (N.pos n)).
-Qed.
-
-Lemma shiftl_ge0_if:
-  forall a b (Ha: 0 <= a) (Hb: 0 <= b), 0 <= Z.shiftl a b.
-Proof.
-  intros. destruct b as [|b|b]; try easy; simpl Z.shiftl.
-  destruct (Pos.succ_pred_or b) as [-> | <-];  rewrite ?Pos.iter_succ.
-  destruct a as [ |a|a].
-  now replace (Pos.iter 1 (Z.mul 2) 0) with 0
-    by (apply Pos.iter_invariant; intros; subst; trivial).
-  now rewrite <- (Pos.iter_swap_gen _ _ _ xO) by trivial. now assert (0 > Z.neg a).
-  rewrite <- (Pos.iter_swap_gen _ _ _ xO) by trivial.
-
- apply testbit_0_l.
-*)
-
-
 Lemma shiftl_ge0_if:
   forall a b (Ha: 0 <= a) (Hb: 0 <= b), 0 <= Z.shiftl a b.
 Proof.
@@ -179,65 +145,6 @@ Proof.
   assert (Z.of_nat (Z.to_nat b) = b). apply Z2Nat.id. apply Hb.
   rewrite H0 in H. apply H.
 Qed.
-
-(*)
-Lemma testbit_of_N a n :
- Z.testbit (Z.of_N a) (Z.of_N n) = N.testbit a n.
-Proof.
- destruct a as [|a], n; simpl; trivial. now destruct a.
-Qed.
-
-Lemma testbit_of_N' a n : 0<=n ->
- Z.testbit (Z.of_N a) n = N.testbit a (Z.to_N n).
-Proof.
- intro Hn. rewrite <- testbit_of_N. f_equal.
- destruct n; trivial; now destruct Hn.
-Qed.
-
-Lemma testbit_Zpos a n : 0<=n ->
- Z.testbit (Zpos a) n = N.testbit (Npos a) (Z.to_N n).
-Proof.
- intro Hn. now rewrite <- testbit_of_N'.
-Qed.
-
-Lemma shiftr_spec_aux a n m : 0<=n -> 0<=m ->
- Z.testbit (Z.shiftr a n) m = Z.testbit a (m+n).
-Proof.
- intros Hn Hm. unfold Z.shiftr.
- destruct n as [ |n|n]; (now destruct Hn) || clear Hn; simpl.
- now rewrite Z.add_0_r.
- assert (forall p, Z.to_N (m + Z.pos p) = (Z.to_N m + N.pos p)%N).
-  destruct m; trivial; now destruct Hm.
- assert (forall p, 0 <= m + Z.pos p).
-  destruct m; easy || now destruct Hm.
- destruct a as [ |a|a].
- (* a = 0 *)
- replace (Pos.iter n Z.div2 0) with 0
-  by (apply Pos.iter_invariant; intros; subst; trivial).
- (*now rewrite 2 testbit_0_l.*)admit.
- (* a > 0 *)
- change (Z.pos a) with (Z.of_N (N.pos a)) at 1.
- rewrite <- (Pos.iter_swap_gen _ _ _ Ndiv2) by now intros [|[ | | ]].
- rewrite testbit_Zpos, testbit_of_N', H; trivial.
- exact (N.shiftr_spec' (Npos a) (Npos n) (Z.to_N m)).
- (* a < 0 *)
- rewrite <- (Pos.iter_swap_gen _ _ _ Pdiv2_up) by trivial.
- rewrite 2 testbit_Zneg, H; trivial. f_equal.
- rewrite (Pos.iter_swap_gen _ _ _ _ Ndiv2) by exact N.pred_div2_up.
- exact (N.shiftr_spec' (Ppred_N a) (Npos n) (to_N m)).
-Qed.
- *)
-
-(*
-Lemma shiftr_spec a n (m: N): (N.le 0 m) ->
- N.testbit (N.shiftr a n) m = N.testbit a (m+n).
-Proof.
- intros _. revert a m.
- induction n using N.peano_ind; intros a m. now rewrite N.add_0_r.
- rewrite N.add_comm, N.add_succ_l, N.add_comm, <- N.add_succ_l.
- now rewrite <- IHn, testbit_succ_r_div2, shiftr_succ_r by apply le_0_l.
-Qed.
- *)
 
 (* Credit: https://github.com/antalsz/hs-to-coq/blob/master/examples/containers/theories/BitUtils.v *)
 Lemma pos_nonneg: forall p, (0 <= N.pos p)%N.
@@ -421,13 +328,6 @@ Proof.
   transitivity (N * b / b). apply H0. rewrite H2. auto with zarith. apply Ha.
 Qed.
 
-(*
-Lemma land_leN_nat:
-  forall a b N (Ha: (Z.of_N a) <= N) (Hb: (Z.of_N b) <= N), Z.of_N (N.land a b) <= N.
-Proof.
-  intros. induction a. simpl. auto. induction b. simpl. auto. simpl. Admitted.
-*)
-
  Lemma Z64_land_range_hi: forall x y, 0 <= x <= Int64.max_unsigned -> 0 <= y <= Int64.max_unsigned -> Z.land x y <= Int64.max_unsigned.
  Proof.
    rewrite max_unsigned64_val.
@@ -588,11 +488,8 @@ Proof.
   transitivity (Z.pos p); auto.
 Qed.
 
-Lemma land_leN_if:
+Hypothesis land_leN_if:
   forall a b N (Hb: b <= N), Z.land a b <= N.
-Proof.
-  (* XP *)
-  Admitted. 
 
 Lemma NPos__bound_l : forall a b, (Pos.land a b <= N.pos a)%N.
 Proof.
@@ -606,19 +503,14 @@ Proof.
 Qed.
 
 (* Xuheng update the Lemma *)
-Lemma lor_leN_if:
+Hypothesis lor_leN_if:
   forall a b N (Hab: a + b <= N), Z.lor a b <= N.
-Admitted.
 
-(* Add 0 <= a *)
-Lemma shiftl_leN_if:
+Hypothesis shiftl_leN_if:
   forall a b N (Ha: a * 281474976710656 <= N) (Hb1: 0 <= b) (Hb2: b <= 48), Z.shiftl a b <= N.
-Admitted.
 
-(* Add 0 <= a *)
-Lemma shiftr_leN_if:
+Hypothesis shiftr_leN_if:
   forall a b N (Ha: a <= N) (Hb: 0 <= b), Z.shiftr a b <= N.
-Admitted.
 
 Lemma int_max_unsigned:
   Int.max_unsigned = 4294967295.
@@ -655,40 +547,58 @@ Qed.
 Lemma invalid_repr:
   Int.repr (-1) = Int.repr INVALID.
 Proof.
+  Local Transparent Int.repr.
   intros. unfold INVALID.
-  Check Int.unsigned_mone.
-  Check Int.unsigned_range_2.
-  Print Int.max_unsigned.
-  Print Int.modulus.
-(* replace (Int.repr (-1)) with (Int.modulus - 1). auto with zarith. auto.*)
-Admitted.
+  unfold Int.repr.
+  assert(Int.Z_mod_modulus (-1) = Int.Z_mod_modulus 4294967295) by reflexivity.
+  apply Int.mkint_eq. assumption.
+  Local Opaque Int.repr.
+Qed.
 
 Lemma invalid64_repr:
   Int64.repr (-1) = Int64.repr INVALID64.
 Proof.
-  intros. unfold INVALID64. replace (-1) with (Int64.modulus - 1). simpl. reflexivity.
-  unfold Int64.modulus.
-Admitted.
+  Local Transparent Int64.repr.
+  intros. unfold INVALID64.
+  unfold Int64.repr.
+  apply Int64.mkint_eq.
+  reflexivity.
+  Local Opaque Int64.repr.
+Qed.
 
 Lemma cast_u32_u64:
   forall z, Int64.unsigned (cast_int_long Unsigned z) = (Int.unsigned z).
-Admitted.
+Proof.
+  intros. destruct z. simpl.
+  rewrite Int64.unsigned_repr.
+  reflexivity.
+  rewrite int64_max_unsigned.
+  unfold Int.modulus, Int.wordsize, Wordsize_32.wordsize,two_power_nat, shift_nat, nat_iter in intrange.
+  omega.
+Qed.
 
 Lemma int_eq_Z:
   forall x y ,(Int.unsigned x = Int.unsigned y) -> x = y.
 Proof.
-Admitted.
+  intros. destruct x, y.
+  apply Int.mkint_eq.
+  simpl in H. assumption.
+Qed.
 
 Lemma int64_eq_Z:
   forall x y ,(Int64.unsigned x = Int64.unsigned y) -> x = y.
-Admitted.
+Proof.
+  intros. destruct x, y.
+  apply Int64.mkint_eq.
+  simpl in H. assumption.
+Qed.
 
 Lemma loop_nat_sub1:
   forall m n, m >= n -> Z.to_nat (m - (n - 1)) = S (Z.to_nat (m - n)).
 Proof.
   intros. rewrite Z.sub_sub_distr. apply Z2Nat.inj_succ.
   omega.
-  Qed.
+Qed.
 
 Lemma loop_ind_sub1:
   forall m n, Z.of_nat (S n) <= m -> Z.to_nat (m - Z.of_nat n) = S (Z.to_nat (m - Z.of_nat (S n))).
@@ -780,21 +690,10 @@ Lemma vm_pte_pfn_level3:
   reflexivity.
 Qed.
 
-Lemma vm_pte_pfn_dev:
+Hypothesis vm_pte_pfn_dev:
   forall pa, valid_paddr pa ->
         let pte := Z.lor (phys_page pa) (Z.lor PAGE_S2_DEVICE S2_RDWR) in
-        phys_page pte = pa.
-Proof.
-  intros. unfold phys_page.
-  assert (pte = Z.lor (phys_page pa) (Z.lor PAGE_S2_DEVICE S2_RDWR)) as Hpte. reflexivity.
-  rewrite Hpte.
-  autounfold in *.
-  rewrite <- Z.land_assoc. simpl.
-  rewrite Z.land_lor_distr_l. simpl. rewrite Z.lor_0_r.
-  unfold phys_page. autounfold in *. repeat rewrite <- Z.land_assoc. simpl.
-  Print phys_page. Print valid_paddr.
-  (* XH change spec. *)
-Admitted.
+        phys_page pte / PAGE_SIZE = pa / PAGE_SIZE.
 
 Lemma succ_plus_1:
   forall n, Z.succ n = n + 1.

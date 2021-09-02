@@ -1,4 +1,4 @@
-# PTWalkCode
+# Code
 
 ```coq
 Require Import Coqlib.

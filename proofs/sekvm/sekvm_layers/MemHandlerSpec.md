@@ -1,4 +1,4 @@
-# MemHandlerSpec
+# Spec
 
 ```coq
 Require Import Coqlib.
@@ -53,6 +53,7 @@ Section MemHandlerSpec.
       let pfn := paddr / PAGE_SIZE in
       let gfn := iova / PAGE_SIZE in
       when' pte == smmu_init_pte_spec (VZ64 prot) (VZ64 paddr) adt;
+      rely is_int64 pte;
       when adt' == smmu_assign_page_spec cbndx index (VZ64 pfn) (VZ64 gfn) adt;
       smmu_map_page_spec cbndx index (VZ64 iova) (VZ64 pte) adt'
     end.

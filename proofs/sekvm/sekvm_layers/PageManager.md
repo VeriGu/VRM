@@ -1,4 +1,4 @@
-# PageManager
+# Layer
 
 ```coq
 Require Import Coqlib.
@@ -25,6 +25,7 @@ Require Import liblayers.compat.CompatGenSem.
 
 Require Import PageManager.Spec.
 Require Import AbstractMachine.Spec.
+Require Import Locks.Spec.
 Require Import MmioSPTWalk.Spec.
 Require Import NPTOps.Spec.
 Require Import RData.

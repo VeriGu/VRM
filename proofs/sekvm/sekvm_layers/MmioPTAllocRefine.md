@@ -1,4 +1,4 @@
-# MmioPTAllocRefine
+# ProofHigh
 
 ```coq
 Require Import Coqlib.
@@ -154,14 +154,6 @@ Section MmioPTAllocProofHigh.
       Qed.
 
     End FreshPrim.
-
-    Section PassthroughPrim.
-
-      Lemma passthrough_correct:
-        sim (crel HDATA LDATA) MmioPTAlloc_passthrough NPTOps.
-        Admitted.
-
-    End PassthroughPrim.
 
   End WITHMEM.
 

@@ -1,4 +1,4 @@
-# PageIndexCode
+# Code
 
 ```coq
 Require Import Coqlib.

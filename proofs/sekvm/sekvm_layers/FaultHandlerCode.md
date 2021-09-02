@@ -1,4 +1,4 @@
-# FaultHandlerCode
+# Code
 
 ```coq
 Require Import Coqlib.

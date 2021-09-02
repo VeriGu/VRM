@@ -1,4 +1,4 @@
-# MmioSPTWalkSpec
+# Spec
 
 ```coq
 Require Import Coqlib.

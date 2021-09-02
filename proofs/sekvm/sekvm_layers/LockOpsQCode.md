@@ -1,4 +1,4 @@
-# LockOpsQCode
+# Code
 
 ```coq
 Require Import Coqlib.

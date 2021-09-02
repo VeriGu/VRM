@@ -1,4 +1,4 @@
-# TrapDispatcherSpec
+# Spec
 
 ```coq
 Require Import Coqlib.
@@ -119,19 +119,24 @@ Section TrapDispatcherSpec.
 
   Definition vm_exit_dispatcher_spec (vmid: Z) (vcpuid: Z) (adt: RData) : option (RData * Z) :=
     when' esr_el2 == get_shadow_ctxt_spec vmid vcpuid ESR_EL2 adt;
+    rely is_int64 esr_el2;
     let exit_type := Z.land (esr_el2 / 67108864) 63 in
     if exit_type =? ESR_ELx_EC_SYS64 then
       when adt' == core_handle_sys64_spec adt;
       when ret == check_spec 0 adt';
+      rely is_int ret;
       Some (adt', ret)
     else
       if exit_type =? ESR_ELx_EC_HVC64 then
         when res, adt' == core_handle_pvops_spec adt;
+        rely is_int res;
         when ret == check_spec res adt';
+        rely is_int ret;
         Some (adt', ret)
       else
         when adt' == panic_spec adt;
         when ret == check_spec 0 adt';
+        rely is_int ret;
         Some (adt', ret).
 
 End TrapDispatcherSpec.

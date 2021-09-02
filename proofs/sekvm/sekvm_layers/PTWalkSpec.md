@@ -1,4 +1,4 @@
-# PTWalkSpec
+# Spec
 
 ```coq
 Require Import Coqlib.

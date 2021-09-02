@@ -1,4 +1,4 @@
-# CtxtSwitch
+# Layer
 
 ```coq
 Require Import Coqlib.

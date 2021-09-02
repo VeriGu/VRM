@@ -1,4 +1,4 @@
-# TrapDispatcher
+# Layer
 
 ```coq
 Require Import Coqlib.

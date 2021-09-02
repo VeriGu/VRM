@@ -1,4 +1,4 @@
-# TrapHandlerCode
+# Code
 
 ```coq
 Require Import Coqlib.

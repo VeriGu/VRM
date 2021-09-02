@@ -1,4 +1,4 @@
-# LocksSpec
+# Spec
 
 ```coq
 Require Import Coqlib.
@@ -21,7 +21,6 @@ Require Import liblayers.compat.CompatLayers.
 Require Import liblayers.compat.CompatGenSem.
 
 Require Import RData.
-Require Import CalLock.
 Require Import Constants.
 Require Import HypsecCommLib.
 Require Import LockOpsH.Spec.
@@ -29,6 +28,40 @@ Require Import LockOpsH.Layer.
 Require Import AbstractMachine.Spec.
 
 Local Open Scope Z_scope.
+
+Section LockRelated.
+
+  Definition local_lock_bound := (10 % nat).
+
+  Inductive head_status:=
+  | LEMPTY | LGET | LHOLD.
+
+  Fixpoint H_CalLock (l: MultiLog) :=
+    match l with
+    | nil => Some (O, LEMPTY, None)
+    | TEVENT i e :: l' =>
+      match H_CalLock l', e with
+      | Some (self_c, LHOLD, Some i'), TTICKET REL_LOCK =>
+          if negb (zeq i i') then None else
+          Some (O, LEMPTY, None)
+
+      | Some (self_c, LHOLD, Some i'), TSHARED _ =>
+          if negb (zeq i i') then None else
+          match self_c with
+          | O         => None
+          | S self_c' => Some (self_c', LHOLD, Some i')
+          end
+
+      | Some (_, LEMPTY, None), TTICKET (WAIT_LOCK n) =>
+          Some (n, LHOLD, Some i)
+
+      | _, _ => None
+      end
+    end.
+
+  Global Opaque H_CalLock.
+
+End LockRelated.
 
 Section LocksSpec.
 
@@ -45,7 +78,7 @@ Section LocksSpec.
       let npt := vmid @ (npts (shared adt)) in
       let npt' := CalNPT npt (orac cpu l) in
       let shared' := (shared adt) {npts: (npts (shared adt)) # vmid == npt'} in
-      let l' := TEVENT cpu (TSHARED (OPULL id)) :: TEVENT cpu (TTICKET (WAIT_LOCK 10%nat)) :: ((orac cpu l) ++ l) in
+      let l' := TEVENT cpu (TSHARED (OPULL id)) :: TEVENT cpu (TTICKET (WAIT_LOCK local_lock_bound)) :: ((orac cpu l) ++ l) in
       match H_CalLock l' with
       | Some _ =>
         Some adt {tstate: 0} {shared: shared'} {log: (log adt) # id == l'} {lock: (lock adt) # id == (LockOwn true)}
@@ -66,7 +99,7 @@ Section LocksSpec.
       let spt := spts (shared adt) in
       let spt' := CalSPT spt (orac cpu l) in
       let shared' := (shared adt) {spts: spt'} in
-      let l' := TEVENT cpu (TSHARED (OPULL id)) :: TEVENT cpu (TTICKET (WAIT_LOCK 10%nat)) :: ((orac cpu l) ++ l) in
+      let l' := TEVENT cpu (TSHARED (OPULL id)) :: TEVENT cpu (TTICKET (WAIT_LOCK local_lock_bound)) :: ((orac cpu l) ++ l) in
       match H_CalLock l' with
       | Some _ =>
         Some adt {tstate: 0} {shared: shared'} {log: (log adt) # id == l'} {lock: (lock adt) # id == (LockOwn true)}
@@ -87,7 +120,7 @@ Section LocksSpec.
       let s2p := s2page (shared adt) in
       let s2p' := CalS2Page s2p (orac cpu l) in
       let shared' := (shared adt) {s2page: s2p'} in
-      let l' := TEVENT cpu (TSHARED (OPULL id)) :: TEVENT cpu (TTICKET (WAIT_LOCK 10%nat)) :: ((orac cpu l) ++ l) in
+      let l' := TEVENT cpu (TSHARED (OPULL id)) :: TEVENT cpu (TTICKET (WAIT_LOCK local_lock_bound)) :: ((orac cpu l) ++ l) in
       match H_CalLock l' with
       | Some _ =>
         Some adt {tstate: 0} {shared: shared'} {log: (log adt) # id == l'} {lock: (lock adt) # id == (LockOwn true)}
@@ -108,7 +141,7 @@ Section LocksSpec.
       let core := core_data (shared adt) in
       let core' := CalCoreData core (orac cpu l) in
       let shared' := (shared adt) {core_data: core'} in
-      let l' := TEVENT cpu (TSHARED (OPULL id)) :: TEVENT cpu (TTICKET (WAIT_LOCK 10%nat)) :: ((orac cpu l) ++ l) in
+      let l' := TEVENT cpu (TSHARED (OPULL id)) :: TEVENT cpu (TTICKET (WAIT_LOCK local_lock_bound)) :: ((orac cpu l) ++ l) in
       match H_CalLock l' with
       | Some _ =>
         Some adt {tstate: 0} {shared: shared'} {log: (log adt) # id == l'} {lock: (lock adt) # id == (LockOwn true)}
@@ -130,7 +163,7 @@ Section LocksSpec.
       let info := vmid @ (vminfos (shared adt)) in
       let info' := CalVMInfo info (orac cpu l) in
       let shared' := (shared adt) {vminfos: (vminfos (shared adt)) # vmid == info'} in
-      let l' := TEVENT cpu (TSHARED (OPULL id)) :: TEVENT cpu (TTICKET (WAIT_LOCK 10%nat)) :: ((orac cpu l) ++ l) in
+      let l' := TEVENT cpu (TSHARED (OPULL id)) :: TEVENT cpu (TTICKET (WAIT_LOCK local_lock_bound)) :: ((orac cpu l) ++ l) in
       match H_CalLock l' with
       | Some _ =>
         Some adt {tstate: 0} {shared: shared'} {log: (log adt) # id == l'} {lock: (lock adt) # id == (LockOwn true)}
@@ -151,7 +184,7 @@ Section LocksSpec.
       let smmu := smmu_vmid (shared adt) in
       let smmu' := CalSMMU smmu (orac cpu l) in
       let shared' := (shared adt) {smmu_vmid: smmu'} in
-      let l' := TEVENT cpu (TSHARED (OPULL id)) :: TEVENT cpu (TTICKET (WAIT_LOCK 10%nat)) :: ((orac cpu l) ++ l) in
+      let l' := TEVENT cpu (TSHARED (OPULL id)) :: TEVENT cpu (TTICKET (WAIT_LOCK local_lock_bound)) :: ((orac cpu l) ++ l) in
       match H_CalLock l' with
       | Some _ =>
         Some adt {tstate: 0} {shared: shared'} {log: (log adt) # id == l'} {lock: (lock adt) # id == (LockOwn true)}

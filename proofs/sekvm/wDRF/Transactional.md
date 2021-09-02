@@ -125,20 +125,6 @@ Section TransactionalProof.
     let samples := sample_updates updates in
     shuffle_lists samples.
 
-  Section TestSampleAndShuffle.
-
-    Definition updates := (UPDATE_PGD 1 1) :: (UPDATE_PUD 2 2) :: (UPDATE_PMD 3 3) :: (UPDATE_PTE 4 4) :: nil.
-
-    Compute sample_updates updates.
-
-    Compute length (sample_updates updates).
-
-    Compute sample_and_shuffle_updates updates.
-
-    Compute length (sample_and_shuffle_updates updates).
-
-  End TestSampleAndShuffle.
-
   Ltac get_sample :=
     match goal with
     | [H: In _ (shuffle_updates ?up) |- _ ] => remember up as sample

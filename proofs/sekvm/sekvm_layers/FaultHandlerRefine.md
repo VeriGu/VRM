@@ -1,4 +1,4 @@
-# FaultHandlerRefine
+# ProofHigh
 
 ```coq
 Require Import Coqlib.
@@ -90,8 +90,9 @@ Section FaultHandlerProofHigh.
                (Hrel: relate_RData f habd labd),
           exists labd', handle_host_stage2_fault_spec  labd = Some labd' /\ relate_RData f habd' labd'.
         Proof.
-          intros until f.
-          solve_refine_proof handle_host_stage2_fault0; repeat hstep; try htrivial.
+          intros. inv Hrel; subst.
+          eexists; split. eassumption.
+          constructor; reflexivity.
         Qed.
 
       Lemma handle_host_stage2_fault_spec_ref:
@@ -110,8 +111,9 @@ Section FaultHandlerProofHigh.
                (Hrel: relate_RData f habd labd),
           exists labd', core_handle_pvops_spec  labd = Some (labd', res) /\ relate_RData f habd' labd'.
         Proof.
-          intros until f.
-          solve_refine_proof core_handle_pvops0; repeat hstep; try htrivial.
+          intros. inv Hrel; subst.
+          eexists; split. eassumption.
+          constructor; reflexivity.
         Qed.
 
       Lemma core_handle_pvops_spec_ref:
@@ -125,14 +127,6 @@ Section FaultHandlerProofHigh.
       Qed.
 
     End FreshPrim.
-
-    Section PassthroughPrim.
-
-      Lemma passthrough_correct:
-        sim (crel HDATA LDATA) FaultHandler_passthrough MemHandler.
-        Admitted.
-
-    End PassthroughPrim.
 
   End WITHMEM.
 

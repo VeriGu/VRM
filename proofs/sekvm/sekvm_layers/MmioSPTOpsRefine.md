@@ -1,4 +1,4 @@
-# MmioSPTOpsRefine
+# ProofHigh
 
 ```coq
 Require Import Coqlib.
@@ -38,6 +38,7 @@ Require Import HypsecCommLib.
 Require Import MmioSPTOps.Layer.
 Require Import MmioSPTOps.Spec.
 Require Import AbstractMachine.Spec.
+Require Import Locks.Spec.
 
 Local Open Scope Z_scope.
 Local Opaque Z.add Z.mul Z.div Z.shiftl Z.shiftr Z.land Z.lor.
@@ -223,14 +224,6 @@ Section MmioSPTOpsProofHigh.
       Qed.
 
     End FreshPrim.
-
-    Section PassthroughPrim.
-
-      Lemma passthrough_correct:
-        sim (crel HDATA LDATA) MmioSPTOps_passthrough MmioSPTWalk.
-        Admitted.
-
-    End PassthroughPrim.
 
   End WITHMEM.
 

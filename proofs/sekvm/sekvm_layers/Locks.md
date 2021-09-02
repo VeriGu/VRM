@@ -1,4 +1,4 @@
-# Locks
+# Layer
 
 ```coq
 Require Import Coqlib.

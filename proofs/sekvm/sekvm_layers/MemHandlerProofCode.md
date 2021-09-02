@@ -1,4 +1,4 @@
-# MemHandlerProofCode
+# ProofLow
 
 ```coq
 Require Import Coqlib.
@@ -108,11 +108,12 @@ Section MemHandlerProofLow.
                (HPTstart: PTree.get _start le = Some (Vlong start))
                (HPTsize: PTree.get _size le = Some (Vlong size))
                (Hinv: high_level_invariant d)
-               (Hspec: clear_vm_stage2_range_spec0 (Int.unsigned vmid) (VZ64 (Int64.unsigned start)) (VZ64 (Int64.unsigned size)) d = Some d'),
+               (Hspec: clear_vm_stage2_range_spec (Int.unsigned vmid) (VZ64 (Int64.unsigned start)) (VZ64 (Int64.unsigned size)) d = Some d'),
              exists le', (exec_stmt ge env le ((m, d): mem) clear_vm_stage2_range_body E0 le' (m, d') Out_normal).
       Proof.
-        solve_code_proof Hspec clear_vm_stage2_range_body; admit
+        solve_code_proof Hspec clear_vm_stage2_range_body; eexists; solve_proof_low.
       Qed.
+
     End BodyProof.
 
     Theorem clear_vm_stage2_range_code_correct:
@@ -172,11 +173,12 @@ Section MemHandlerProofLow.
                (HPTcbndx: PTree.get _cbndx le = Some (Vint cbndx))
                (HPTindex: PTree.get _index le = Some (Vint index))
                (Hinv: high_level_invariant d)
-               (Hspec: el2_arm_lpae_map_spec0 (VZ64 (Int64.unsigned iova)) (VZ64 (Int64.unsigned paddr)) (VZ64 (Int64.unsigned prot)) (Int.unsigned cbndx) (Int.unsigned index) d = Some d'),
+               (Hspec: el2_arm_lpae_map_spec (VZ64 (Int64.unsigned iova)) (VZ64 (Int64.unsigned paddr)) (VZ64 (Int64.unsigned prot)) (Int.unsigned cbndx) (Int.unsigned index) d = Some d'),
              exists le', (exec_stmt ge env le ((m, d): mem) el2_arm_lpae_map_body E0 le' (m, d') Out_normal).
       Proof.
-        solve_code_proof Hspec el2_arm_lpae_map_body; admit
+        solve_code_proof Hspec el2_arm_lpae_map_body; eexists; solve_proof_low.
       Qed.
+
     End BodyProof.
 
     Theorem el2_arm_lpae_map_code_correct:
@@ -190,56 +192,8 @@ Section MemHandlerProofLow.
                (PTree.empty _) (bind_parameter_temps' (fn_params f_el2_arm_lpae_map ) (Vlong iova :: Vlong paddr :: Vlong prot :: Vint cbndx :: Vint index :: nil)
                (create_undef_temps (fn_temps f_el2_arm_lpae_map)))) hinv.
     Qed.
+
   End el2_arm_lpae_map_proof.
-
-  Section kvm_phys_addr_ioremap_proof.
-
-    Let L : compatlayer (cdata RData) :=
-      map_io ↦ gensem map_io_spec.
-
-    Local Instance: ExternalCallsOps mem := CompatExternalCalls.compatlayer_extcall_ops L.
-    Local Instance: CompilerConfigOps mem := CompatExternalCalls.compatlayer_compiler_config_ops L.
-
-    Section BodyProof.
-
-      Context `{Hwb: WritableBlockOps}.
-      Variable (sc: stencil).
-      Variables (ge: genv) (STENCIL_MATCHES: stencil_matches sc ge).
-
-      Variable b_map_io: block.
-      Hypothesis h_map_io_s : Genv.find_symbol ge map_io = Some b_map_io.
-      Hypothesis h_map_io_p : Genv.find_funct_ptr ge b_map_io
-                              = Some (External (EF_external map_io
-                                               (signature_of_type (Tcons tuint (Tcons tuint (Tcons tuint Tnil))) tvoid cc_default))
-                                     (Tcons tuint (Tcons tuint (Tcons tuint Tnil))) tvoid cc_default).
-
-      Lemma kvm_phys_addr_ioremap_body_correct:
-        forall m d d' env le vmid gpa pa size
-               (Henv: env = PTree.empty _)
-               (HPTvmid: PTree.get _vmid le = Some (Vint vmid))
-               (HPTgpa: PTree.get _gpa le = Some (Vlong gpa))
-               (HPTpa: PTree.get _pa le = Some (Vlong pa))
-               (HPTsize: PTree.get _size le = Some (Vlong size))
-               (Hinv: high_level_invariant d)
-               (Hspec: kvm_phys_addr_ioremap_spec0 (Int.unsigned vmid) (VZ64 (Int64.unsigned gpa)) (VZ64 (Int64.unsigned pa)) (VZ64 (Int64.unsigned size)) d = Some d'),
-             exists le', (exec_stmt ge env le ((m, d): mem) kvm_phys_addr_ioremap_body E0 le' (m, d') Out_normal).
-      Proof.
-        solve_code_proof Hspec kvm_phys_addr_ioremap_body; admit
-      Qed.
-    End BodyProof.
-
-    Theorem kvm_phys_addr_ioremap_code_correct:
-      spec_le (kvm_phys_addr_ioremap ↦ kvm_phys_addr_ioremap_spec_low) (〚 kvm_phys_addr_ioremap ↦ f_kvm_phys_addr_ioremap 〛 L).
-    Proof.
-      set (L' := L) in *.
-      unfold L in *.
-      fbigstep_pre L'.
-      fbigstep (kvm_phys_addr_ioremap_body_correct s (Genv.globalenv p) makeglobalenv
-               b0 Hb0fs Hb0fp m'0 labd labd'
-               (PTree.empty _) (bind_parameter_temps' (fn_params f_kvm_phys_addr_ioremap ) (Vint vmid :: Vlong gpa :: Vlong pa :: Vlong size :: nil)
-               (create_undef_temps (fn_temps f_kvm_phys_addr_ioremap)))) hinv.
-    Qed.
-  End kvm_phys_addr_ioremap_proof.
 
 End MemHandlerProofLow.
 

@@ -1,4 +1,4 @@
-# LockOpsQRefine
+# ProofHigh
 
 ```coq
 Require Import Coqlib.

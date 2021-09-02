@@ -1,4 +1,4 @@
-# PTAllocSpec
+# Spec
 
 ```coq
 Require Import Coqlib.

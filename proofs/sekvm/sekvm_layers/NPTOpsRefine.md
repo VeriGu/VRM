@@ -1,4 +1,4 @@
-# NPTOpsRefine
+# ProofHigh
 
 ```coq
 Require Import Coqlib.
@@ -36,6 +36,7 @@ Require Import HypsecCommLib.
 Require Import NPTOps.Spec.
 Require Import NPTWalk.Spec.
 Require Import AbstractMachine.Spec.
+Require Import Locks.Spec.
 Require Import Constants.
 Require Import RData.
 
