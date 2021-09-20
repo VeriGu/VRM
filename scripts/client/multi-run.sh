@@ -11,6 +11,16 @@ if [ $# -lt 1 ]; then
 fi
 
 if [ $1 = apache ] || [ $1 = mongo ] || [ $1 = redis ] || [ $1 = hack ] || [ $1 = kern ]; then
+	RESULTS="${1}.txt"
+	if [ ! $1 = hack ] && [ ! $1 = kern ]; then
+		if [ -f $RESULTS ]; then
+			now=`date +"%Y-%m-%d-%H-%M-%S"`
+			old="${RESULTS}-${now}"
+			echo "backup old $RESULTS to ${old}"
+			mv $RESULTS $old
+		fi
+	fi
+
 	BENCHMARK=$1
 	echo $NUM
 	for i in `seq 1 $NUM`;
@@ -23,6 +33,12 @@ if [ $1 = apache ] || [ $1 = mongo ] || [ $1 = redis ] || [ $1 = hack ] || [ $1 
 	
 		./$BENCHMARK.sh $IP &
 	done
+
+	for job in `jobs -p`
+	do
+		wait $job
+	done
+
 else
 	usage
 fi

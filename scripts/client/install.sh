@@ -10,7 +10,7 @@ if [[ $? != 0 ]]; then
 fi
 
 echo "Install env for YCSB"
-sudo apt-get install default-jre default-jdk maven
+sudo apt-get install -y default-jre default-jdk maven
 sleep 1
 curl -O --location https://github.com/brianfrankcooper/YCSB/releases/download/0.17.0/ycsb-0.17.0.tar.gz
 tar xfvz ycsb-0.17.0.tar.gz
