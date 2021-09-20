@@ -115,7 +115,7 @@ echo $MAC
 
 if [[ $err == 0 ]]; then
 	echo "Using bridged networking"
-        BRIDGE_IF="-netdev tap,id=net1,helper=/mydata/sosp-paper211-ae/qemu/qemu-bridge-helper,vhost=on"
+        BRIDGE_IF="-netdev tap,id=net1,helper=$QEMU/qemu-bridge-helper,vhost=on"
         BRIDGE_IF="$BRIDGE_IF -device virtio-net-pci,netdev=net1,mac=$MAC"
         #BRIDGE_IF="$BRIDGE_IF -device virtio-net-pci,netdev=net1"
 elif [[ "$tap" != "/dev/tap" ]]; then
@@ -126,7 +126,7 @@ elif [[ "$tap" != "/dev/tap" ]]; then
 	exec 3<>$tap
 fi
 
-$QEMU \
+$QEMU/aarch64-softmmu/qemu-system-aarch64 \
         -smp $SMP -m $MEMSIZE -machine virt${DUMPDTB} -cpu host \
 	-kernel ${KERNEL} -enable-kvm ${DTB} \
         -drive if=none,file=$FS,id=vda,cache=none,format=raw \

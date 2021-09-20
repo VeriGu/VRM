@@ -97,7 +97,7 @@ tap=/dev/tap$(< /sys/class/net/kvmtap0/ifindex) 2>/dev/null
 
 if [[ $err == 0 ]]; then
 	echo "Using bridged networking"
-        BRIDGE_IF="-netdev tap,id=net1,helper=../../qemu/qemu-bridge-helper,vhost=on"
+        BRIDGE_IF="-netdev tap,id=net1,helper=/srv/vm/qemu/qemu-bridge-helper,vhost=on"
         BRIDGE_IF="$BRIDGE_IF -device virtio-net-pci,netdev=net1,mac=de:ad:be:ef:f6:bd"
         #BRIDGE_IF="$BRIDGE_IF -device virtio-net-pci,netdev=net1"
 elif [[ "$tap" != "/dev/tap" ]]; then

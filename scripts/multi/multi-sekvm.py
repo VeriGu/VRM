@@ -16,7 +16,7 @@ else:
         exit(0)
 
 NUM = 8
-QEMU = "../../qemu/aarch64-softmmu/qemu-system-aarch64"
+QEMU = "../../qemu"
 CMD = "./run-guest-n.sh -q {} -k ../tests/Image.sekvm -i /mydata/cloud-{}-{}.img -m tcp:localhost:444{},server,nowait -x {}"
 
 print("Launch %d VM(s)"%NUM)
