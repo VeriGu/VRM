@@ -453,7 +453,7 @@ To shutdown VMs from the client, run:
 We use kvm-unit-test for microbenchmarks. kvm-unit-test creates a new VM for each measurement (please see arm-run in the source folder after untar). You can get the source of the benchmarks from here:
 #### wget http://hp03.ncl.cs.columbia.edu/files/kvm-unit-test.tar.gz
 
-#### 2.12 Running Microbenchmarks
+### 2.12 Running Microbenchmarks
 We measure the workloads using Arm’s cycle counters. By default, KVM does not allow VMs to access the counters. Thus, we would have to patch KVM to enable VM access. You can the patch for KVM from here:
 #### wget http://hp03.ncl.cs.columbia.edu/files/kvm-micro-patch.diff
 And the patch for SeKVM from here:
