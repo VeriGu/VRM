@@ -40,6 +40,7 @@ It also provides instructions on running the performance evaluations of SeKVM.
       - [2.11.2 Apache/MongoDB/Redis](#2112-apachemongodbredis)
       - [2.11.3 Hackbench/Kernbench](#2113-hackbenchkernbench)
       - [2.11.4 Shutdown VMs](#2114-shutdown-vms)
+    - [2.12 Running Microbenchmarks](#212-running-microbenchmarks)
 
 ## 1. Coq Proofs
 
@@ -449,7 +450,37 @@ To shutdown VMs from the client, run:
 # cd /root/sosp-paper211-ae/scripts/client
 # ./multi-shutdown.sh
 ```
+We use kvm-unit-test for microbenchmarks. kvm-unit-test creates a new VM for each measurement (please see arm-run in the source folder after untar). You can get the source of the benchmarks from here:
+#### wget http://hp03.ncl.cs.columbia.edu/files/kvm-unit-test.tar.gz
 
+#### 2.12 Running Microbenchmarks
+We measure the workloads using Arm’s cycle counters. By default, KVM does not allow VMs to access the counters. Thus, we would have to patch KVM to enable VM access. You can the patch for KVM from here:
+#### wget http://hp03.ncl.cs.columbia.edu/files/kvm-micro-patch.diff
+And the patch for SeKVM from here:
+#### wget http://hp03.ncl.cs.columbia.edu/files/sekvm-micro-patch.diff
+
+Before running the tests, you will have to recompile and reinstall KVM/SeKVM. For KVM, you should first **cd sosp-paper211-ae/linux** and do **git checkout HEAD~1** to checkout to the mainline Linux 4.18. For SeKVM you do not have to git checkout.
+
+You can compile the source by **make -j8 && make modules_install && make install**, and install the new binaries by **cd /mydata/sosp-paper211-ae/scripts/tools/; ./install-kernel.sh**.
+
+You also need to install perf in your system for testing microbenchmarks. You can compile perf by:
+#### cd /mydata/sosp-paper211-ae/linux/tools/perf; make; cp perf /usr/bin/
+
+Then download the 3 QMP scripts that we created to pin vCPUs to physical CPUs: isolate_vcpus.sh, pin_vcpus.sh, qmp-cpus. You can download them by replacing **$FILENAME** in the following command:
+#### wget http://hp03.ncl.cs.columbia.edu/files/$FILENAME”.
+
+Then, copy the above three scripts to
+**QEMU for SeKVM:** /mydata/sosp-paper211-ae/qemu/scripts/qmp/
+**QEMU for KVM:** /srv/vm/qemu/scripts/qmp
+
+Then you can untar kvm-unit-test first, and compile the source by:
+**./configure** and **make**.
+
+You can now run the tests by running the respective script for KVM and SeKVM in kvm-uni-test/:
+#### KVM: ./perf-kvm.sh
+#### SeKVM: ./perf-sekvm.sh
+
+You need to open a different terminal, ssh to the cloudlab server running KVM/SeKVM, then cd into the corresponding qemu/scripts/qmp and run **./isolate_cpu.sh**. The raw data will be written to the file **result** (Note that the old results will be removed). You can also use **./get-results.sh** to pull the numbers from **result**.
 
 [AbstractMachineState]: proofs/sekvm/sekvm_layers/RData.md
 [AbstractMachineLocks]: proofs/sekvm/sekvm_layers/CalLock.md
