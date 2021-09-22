@@ -50,7 +50,7 @@ access conditions that we call the wDRF conditions, then any observable behavior
 is also observable on the sequential consistent (SC) hardware model. Second, we prove that SeKVM satisfies the wDRF conditions.
 Third, we prove the security of SeKVM on the SC model. 
 Together, these three components guarantee the security of SeKVM on Arm relaxed memory hardware.
-
+To check the proof in Coq, please see instruction in [this link](https://github.com/VeriGu/sosp-paper211-ae/tree/master/proofs/sosp-paper211-ae-proof).
 ### 1.1 Proofs of main theorems in the paper
 
 Here we include the mechanized proofs of Theorem 2 and Theorem 4 in Section 4. Note that Theorem 1 and Theorem 3 are both weakened versions of Theorem 4. 

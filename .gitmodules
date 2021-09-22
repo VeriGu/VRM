@@ -4,3 +4,6 @@
 [submodule "qemu"]
 	path = qemu
 	url = https://github.com/VeriGu/vct-qemu.git
+[submodule "proofs/sosp-paper211-ae-proof"]
+	path = proofs/sosp-paper211-ae-proof
+	url = https://github.com/VeriGu/sosp-paper211-ae-proof.git
